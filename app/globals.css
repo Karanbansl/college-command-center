@@ -23,10 +23,10 @@
   --scrollbar-track: #0a0a14;
 }
 
-/* Light Theme (Blue Sky & Ocean) */
+/* Light Theme (Daylight & Sun) */
 .light {
   --foreground-rgb: 15 23 42;
-  --bg-base: #f0f9ff;
+  --bg-base: #fcfcf9; /* Premium warm off-white */
   --text-main: #0f172a;
   --text-muted: rgba(15, 23, 42, 0.65);
   --glass-bg: rgba(255, 255, 255, 0.4); /* clearer glass against blue sky */
@@ -139,7 +139,7 @@ body {
 }
 
 /* ─── Space background ───────────────────────────────────── */
-/* Deep space nebula mesh / Light mode airy clouds */
+/* Deep space nebula mesh / Light mode daylight glow */
 .mesh-gradient {
   background:
     radial-gradient(ellipse 70% 50% at 15% 40%, rgba(88, 28, 220, 0.15) 0%, transparent 55%),
@@ -148,7 +148,10 @@ body {
 }
 
 .light .mesh-gradient {
-  background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 40%, #f0f9ff 100%);
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 40%, rgba(253, 224, 71, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 85% 15%, rgba(125, 211, 252, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 50% 80%, rgba(245, 158, 11, 0.15) 0%, transparent 55%);
   opacity: 1; /* override any default transparency, it should stand out */
 }
 

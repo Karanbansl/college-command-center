@@ -11,42 +11,85 @@ interface SpaceBackgroundProps {
 }
 
 // ----------------------------------------------------------------------------
-// PLANET COMPONENT
+// THEMED PLANET / SUN COMPONENT
 // ----------------------------------------------------------------------------
-function Planet({ theme }: { theme?: string }) {
+function Planet({ isLight }: { isLight: boolean }) {
   const planetRef = useRef<THREE.Mesh>(null)
-  const isLight = theme === 'light'
+  
+  const bodyMatRef = useRef<THREE.MeshStandardMaterial>(null)
+  const atmosMatRef = useRef<THREE.MeshBasicMaterial>(null)
+  
+  const dirLight1Ref = useRef<THREE.DirectionalLight>(null)
+  const dirLight2Ref = useRef<THREE.DirectionalLight>(null)
+  const ambLightRef = useRef<THREE.AmbientLight>(null)
 
-  // Slowly rotate the planet
-  useFrame((state) => {
+  // Target values cached to prevent recreation
+  const darkBodyColor = useMemo(() => new THREE.Color("#010108"), [])
+  const lightBodyColor = useMemo(() => new THREE.Color("#fef08a"), [])
+  const darkEmissive = useMemo(() => new THREE.Color("#000000"), [])
+  const lightEmissive = useMemo(() => new THREE.Color("#facc15"), [])
+
+  const darkAtmosColor = useMemo(() => new THREE.Color("#8b5cf6"), [])
+  const lightAtmosColor = useMemo(() => new THREE.Color("#fde047"), [])
+
+  const darkLight1 = useMemo(() => new THREE.Color("#8b5cf6"), [])
+  const lightLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
+  
+  const darkLight2 = useMemo(() => new THREE.Color("#06b6d4"), [])
+  const lightLight2 = useMemo(() => new THREE.Color("#fef08a"), [])
+
+  // Slowly rotate the planet and smoothly interpolate colors when theme changes
+  useFrame((state, delta) => {
     if (planetRef.current) {
       planetRef.current.rotation.y = state.clock.elapsedTime * 0.03
+    }
+
+    const dampSpeed = 3 // Controls the speed of the transition
+
+    if (bodyMatRef.current) {
+      bodyMatRef.current.color.lerp(isLight ? lightBodyColor : darkBodyColor, dampSpeed * delta)
+      bodyMatRef.current.emissive.lerp(isLight ? lightEmissive : darkEmissive, dampSpeed * delta)
+      bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.6 : 0, dampSpeed, delta)
+    }
+
+    if (atmosMatRef.current) {
+      atmosMatRef.current.color.lerp(isLight ? lightAtmosColor : darkAtmosColor, dampSpeed * delta)
+      atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0.4 : 0.12, dampSpeed, delta)
+    }
+
+    if (dirLight1Ref.current) {
+      dirLight1Ref.current.color.lerp(isLight ? lightLight1 : darkLight1, dampSpeed * delta)
+      dirLight1Ref.current.intensity = THREE.MathUtils.damp(dirLight1Ref.current.intensity, isLight ? 2 : 4, dampSpeed, delta)
+    }
+
+    if (dirLight2Ref.current) {
+      dirLight2Ref.current.color.lerp(isLight ? lightLight2 : darkLight2, dampSpeed * delta)
+      dirLight2Ref.current.intensity = THREE.MathUtils.damp(dirLight2Ref.current.intensity, isLight ? 1 : 0.5, dampSpeed, delta)
+    }
+
+    if (ambLightRef.current) {
+      ambLightRef.current.intensity = THREE.MathUtils.damp(ambLightRef.current.intensity, isLight ? 0.8 : 0.02, dampSpeed, delta)
     }
   })
 
   // We place the planet far back and off to the right
   return (
     <group position={[140, 70, -250]}>
-      {/* Lighting to create a premium cinematic crescent effect */}
-      <directionalLight 
-        position={[-50, 30, 20]} 
-        intensity={isLight ? 2 : 4} 
-        color={isLight ? "#f8fafc" : "#8b5cf6"} 
-      />
-      <directionalLight 
-        position={[50, -30, -20]} 
-        intensity={isLight ? 1 : 0.5} 
-        color={isLight ? "#e2e8f0" : "#06b6d4"} 
-      />
-      <ambientLight intensity={isLight ? 0.8 : 0.02} color="#ffffff" />
+      {/* Dynamic Lighting */}
+      <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#8b5cf6" />
+      <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#06b6d4" />
+      <ambientLight ref={ambLightRef} intensity={0.02} color="#ffffff" />
 
-      {/* The solid dark/light body of the planet */}
+      {/* The solid body (Dark Planet -> Bright Sun) */}
       <mesh ref={planetRef}>
         <sphereGeometry args={[60, 64, 64]} />
         <meshStandardMaterial
-          color={isLight ? "#f1f5f9" : "#010108"}
-          roughness={isLight ? 0.4 : 0.9}
-          metalness={isLight ? 0.1 : 0.1}
+          ref={bodyMatRef}
+          color="#010108"
+          roughness={0.9}
+          metalness={0.1}
+          emissive="#000000"
+          emissiveIntensity={0}
         />
       </mesh>
 
@@ -54,89 +97,13 @@ function Planet({ theme }: { theme?: string }) {
       <mesh>
         <sphereGeometry args={[62, 64, 64]} />
         <meshBasicMaterial
-          color={isLight ? "#bae6fd" : "#8b5cf6"}
+          ref={atmosMatRef}
+          color="#8b5cf6"
           transparent
-          opacity={isLight ? 0.4 : 0.12}
+          opacity={0.12}
           side={THREE.BackSide}
-          blending={isLight ? THREE.NormalBlending : THREE.AdditiveBlending}
+          blending={THREE.AdditiveBlending}
           depthWrite={false}
-        />
-      </mesh>
-    </group>
-  )
-}
-
-// ----------------------------------------------------------------------------
-// OCEAN & SUN COMPONENTS (LIGHT MODE)
-// ----------------------------------------------------------------------------
-function Sun({ opacity = 1 }: { opacity: number }) {
-  return (
-    <group visible={opacity > 0.01}>
-      {/* Sun sphere */}
-      <mesh position={[0, 40, -300]}>
-        <sphereGeometry args={[40, 32, 32]} />
-        <meshBasicMaterial color="#fef08a" transparent opacity={opacity} fog={false} />
-      </mesh>
-      {/* Sun intense glow */}
-      <mesh position={[0, 40, -305]}>
-        <planeGeometry args={[250, 250]} />
-        <meshBasicMaterial color="#fde047" transparent opacity={opacity * 0.4} blending={THREE.AdditiveBlending} depthWrite={false} fog={false} />
-      </mesh>
-    </group>
-  )
-}
-
-function Ocean({ opacity = 1 }: { opacity: number }) {
-  const meshRef = useRef<THREE.Mesh>(null)
-  
-  // Custom wave animation
-  useFrame((state) => {
-    if (meshRef.current && meshRef.current.geometry) {
-      const positionAttribute = meshRef.current.geometry.getAttribute('position')
-      const vertex = new THREE.Vector3()
-      const time = state.clock.elapsedTime
-
-      for (let i = 0; i < positionAttribute.count; i++) {
-        vertex.fromBufferAttribute(positionAttribute, i)
-        // Combine gentle sine waves for a rolling ocean effect
-        const waveX = Math.sin(vertex.x * 0.05 + time * 0.8) * 2
-        const waveY = Math.cos(vertex.y * 0.05 + time * 0.5) * 2
-        vertex.z = waveX + waveY
-        positionAttribute.setZ(i, vertex.z)
-      }
-      
-      meshRef.current.geometry.computeVertexNormals()
-      positionAttribute.needsUpdate = true
-    }
-  })
-
-  return (
-    <group visible={opacity > 0.01}>
-      {/* Daylight lighting for the ocean */}
-      <ambientLight intensity={1.5 * opacity} color="#ffffff" />
-      <directionalLight 
-        position={[100, 100, 50]} 
-        intensity={3 * opacity} 
-        color="#fefce8" 
-      />
-      
-      <mesh 
-        ref={meshRef} 
-        rotation={[-Math.PI / 2, 0, 0]} 
-        position={[0, -20, -50]}
-      >
-        {/* Very large plane with enough segments for smooth wave displacement */}
-        <planeGeometry args={[800, 800, 64, 64]} />
-        <meshPhysicalMaterial
-          color="#0284c7"
-          emissive="#0369a1"
-          emissiveIntensity={0.2}
-          roughness={0.1}
-          metalness={0.8}
-          transmission={0.9} // Glass-like water transparency
-          thickness={5}
-          transparent
-          opacity={opacity}
         />
       </mesh>
     </group>
@@ -151,16 +118,12 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
 
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const isLight = mounted && resolvedTheme === 'light'
   
-  // Transition value: 0 = Dark (Space), 1 = Light (Ocean)
-  const [transitionValue, setTransitionValue] = useState(isLight ? 1 : 0)
-
   useEffect(() => {
     setMounted(true)
-    // Snap immediately to correct value on mount
-    setTransitionValue(resolvedTheme === 'light' ? 1 : 0)
-  }, [resolvedTheme])
+  }, [])
+
+  const isLight = mounted && resolvedTheme === 'light'
 
   // Generate random star positions in a sphere
   const [positions, scales] = useMemo(() => {
@@ -188,29 +151,25 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
     return [positions, scales]
   }, [count])
 
-  // Slowly rotate the entire star field and handle opacity transition
-  useFrame((state, delta) => {
-    // Smoothly interpolate the transition value over ~1.5 seconds
-    const targetValue = isLight ? 1 : 0
-    if (transitionValue !== targetValue) {
-      const step = delta * 0.66 // 1.5 seconds to go from 0 to 1
-      setTransitionValue((prev) => {
-        const next = isLight ? prev + step : prev - step
-        return Math.max(0, Math.min(1, next))
-      })
-    }
+  const pointsMatRef = useRef<THREE.PointsMaterial>(null)
+  
+  const darkStarColor = useMemo(() => new THREE.Color("#ffffff"), [])
+  const lightStarColor = useMemo(() => new THREE.Color("#fcd34d"), []) // Warm sun-dust
 
-    // Always rotate stars even if invisible, so they keep moving
+  // Slowly rotate the entire star field and transition star colors
+  useFrame((state, delta) => {
     if (pointsRef.current) {
       pointsRef.current.rotation.y = state.clock.elapsedTime * 0.02
       pointsRef.current.rotation.x = state.clock.elapsedTime * 0.005
     }
+    
+    if (pointsMatRef.current) {
+      pointsMatRef.current.color.lerp(isLight ? lightStarColor : darkStarColor, 3 * delta)
+      pointsMatRef.current.opacity = THREE.MathUtils.damp(pointsMatRef.current.opacity, isLight ? 0.6 : 0.8, 3, delta)
+    }
   })
 
-  const spaceOpacity = 1 - transitionValue
-  const oceanOpacity = transitionValue
-
-  // Generate a soft circular glow texture dynamically (solid white, opacity handled by material)
+  // Generate a soft circular glow texture dynamically (pure white, tinted by PointsMaterial)
   const particleTexture = useMemo(() => {
     if (typeof window === 'undefined') return null
     const canvas = document.createElement('canvas')
@@ -219,11 +178,11 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
     const context = canvas.getContext('2d')
     if (context) {
       const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16)
-      // Base glowing stars for dark mode
+      // Base pure white glowing stars (PointsMaterial will apply the tint)
       gradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
-      gradient.addColorStop(0.2, 'rgba(240, 248, 255, 0.8)')
-      gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)')
-      gradient.addColorStop(1, 'rgba(3, 3, 18, 0)')
+      gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.8)')
+      gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)')
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
       context.fillStyle = gradient
       context.fillRect(0, 0, 32, 32)
     }
@@ -235,17 +194,11 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
 
   return (
     <group>
-      {/* 3D Planet (Dark Mode Only) */}
-      <group visible={spaceOpacity > 0.01}>
-        <Planet theme="dark" />
-      </group>
+      {/* 3D Planet completely reactive to theme */}
+      <Planet isLight={isLight} />
 
-      {/* 3D Ocean & Sun (Light Mode Only) */}
-      <Ocean opacity={oceanOpacity} />
-      <Sun opacity={oceanOpacity} />
-
-      {/* Starfield Particles (Dark Mode Only) */}
-      <points ref={pointsRef} visible={spaceOpacity > 0.01}>
+      {/* Starfield Particles */}
+      <points ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
@@ -263,12 +216,13 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
           />
         </bufferGeometry>
         <pointsMaterial
+          ref={pointsMatRef}
           size={2.2}
           sizeAttenuation={true}
           color="#ffffff"
           map={particleTexture}
           transparent={true}
-          opacity={0.8 * spaceOpacity}
+          opacity={0.8}
           depthWrite={false}
           blending={THREE.AdditiveBlending}
           fog={true}
