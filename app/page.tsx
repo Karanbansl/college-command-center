@@ -13,6 +13,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen mesh-gradient noise-overlay relative">
+      {/* Star field — fixed behind everything */}
+      <div className="space-stars" aria-hidden="true" />
       {/* Nav */}
       <CommandBar
         searchQuery={searchQuery}

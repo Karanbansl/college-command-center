@@ -109,15 +109,16 @@ export default function HeroSection({ links }: HeroSectionProps) {
             style={{ marginTop: 24 }}
           >
             {/* Label */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(255,255,255,0.08), transparent)', maxWidth: 100 }} />
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>
                 University Portals
               </span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.08), transparent)', maxWidth: 200 }} />
+              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.08), transparent)', maxWidth: 100 }} />
             </div>
 
-            {/* Horizontal scrollable tile row */}
-            <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
+            {/* Horizontal wrap tile row */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14, paddingBottom: 4 }}>
               {links.map((link, i) => {
                 const palette = palettes[i % palettes.length]
                 const Icon = iconMap[link.icon] || Layout
@@ -135,11 +136,11 @@ export default function HeroSection({ links }: HeroSectionProps) {
                     whileHover={{ scale: 1.06, y: -3 }}
                     whileTap={{ scale: 0.96 }}
                     style={{
-                      flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                      padding: '12px 16px', borderRadius: 16, textDecoration: 'none',
+                      flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+                      padding: '14px 18px', borderRadius: 18, textDecoration: 'none',
                       background: `linear-gradient(135deg, rgba(${hexRgb(palette.from)},0.2) 0%, rgba(${hexRgb(palette.to)},0.1) 100%)`,
                       border: `1px solid rgba(${hexRgb(palette.from)},0.3)`,
-                      minWidth: 80, maxWidth: 90,
+                      minWidth: 100, maxWidth: 120,
                       boxShadow: `0 4px 20px rgba(${hexRgb(palette.from)},0.15)`,
                       cursor: 'pointer',
                       transition: 'box-shadow 0.25s ease',
@@ -149,15 +150,15 @@ export default function HeroSection({ links }: HeroSectionProps) {
                   >
                     {/* Icon bubble */}
                     <div style={{
-                      width: 38, height: 38, borderRadius: 12,
+                      width: 44, height: 44, borderRadius: 14,
                       background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: `0 4px 14px ${palette.glow}`,
                     }}>
-                      <Icon size={17} style={{ color: '#fff' }} />
+                      <Icon size={20} style={{ color: '#fff' }} />
                     </div>
                     <span style={{
-                      fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.85)',
+                      fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.9)',
                       textAlign: 'center', lineHeight: 1.3,
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                       maxWidth: '100%',
