@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Filter, LayoutGrid, List } from 'lucide-react'
 import ResourceCard from './ResourceCard'
+import PDFViewerModal from './PDFViewerModal'
 import type { Resource } from '@/lib/data'
 
 interface ResourceGridProps {
@@ -16,6 +17,7 @@ interface ResourceGridProps {
 export default function ResourceGrid({ searchQuery, resources, subjects, loading }: ResourceGridProps) {
   const [activeSubject, setActiveSubject] = useState('All')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [activePdf, setActivePdf] = useState<Resource | null>(null)
 
   const filtered = useMemo(() => {
     return resources.filter((r) => {
@@ -139,7 +141,12 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
                 }
               >
                 {filtered.map((resource, index) => (
-                  <ResourceCard key={resource.id} resource={resource} index={index} />
+                  <ResourceCard 
+                    key={resource.id} 
+                    resource={resource} 
+                    index={index} 
+                    onViewPdf={() => setActivePdf(resource)} 
+                  />
                 ))}
               </motion.div>
             ) : (
@@ -162,6 +169,16 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
           </AnimatePresence>
         )}
       </div>
+
+      <AnimatePresence>
+        {activePdf && (
+          <PDFViewerModal
+            url={activePdf.url}
+            title={activePdf.title}
+            onClose={() => setActivePdf(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }

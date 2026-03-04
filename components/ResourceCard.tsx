@@ -43,9 +43,10 @@ const typeConfig = {
 interface ResourceCardProps {
   resource: Resource
   index: number
+  onViewPdf?: () => void
 }
 
-export default function ResourceCard({ resource, index }: ResourceCardProps) {
+export default function ResourceCard({ resource, index, onViewPdf }: ResourceCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -120,6 +121,13 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
         }}
         className="glass-card glass-card-hover cursor-pointer h-full relative overflow-hidden group"
         aria-label={`${resource.title} - ${resource.type}`}
+        onClick={() => {
+          if (resource.type === 'pdf' && onViewPdf) {
+            onViewPdf()
+          } else {
+            window.open(resource.url, '_blank', 'noopener,noreferrer')
+          }
+        }}
       >
         {/* Glow overlay on hover */}
         <motion.div
@@ -190,10 +198,7 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
               )}
             </div>
 
-            <motion.a
-              href={resource.url}
-              target={resource.type === 'link' ? '_blank' : '_self'}
-              rel={resource.type === 'link' ? 'noopener noreferrer' : undefined}
+            <motion.button
               id={`resource-link-${resource.id}`}
               aria-label={`Open ${resource.title}`}
               className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg
@@ -201,14 +206,21 @@ export default function ResourceCard({ resource, index }: ResourceCardProps) {
                           hover:opacity-80 transition-all duration-200`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (resource.type === 'pdf' && onViewPdf) {
+                  onViewPdf()
+                } else {
+                  window.open(resource.url, '_blank', 'noopener,noreferrer')
+                }
+              }}
             >
               {resource.type === 'link' ? (
                 <>Open <ExternalLink size={10} /></>
               ) : (
                 <>View <ArrowUpRight size={10} /></>
               )}
-            </motion.a>
+            </motion.button>
           </div>
         </div>
       </motion.div>
