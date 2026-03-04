@@ -21,20 +21,29 @@ import {
   getDocs,
   serverTimestamp,
 } from 'firebase/firestore'
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-} from 'firebase/storage'
-import { auth, db, storage } from '@/lib/firebase'
+import { auth, db } from '@/lib/firebase'
 import { resources as staticResources, universityLinks as staticLinks } from '@/lib/data'
 import {
   LogOut, Plus, Pencil, Trash2, Save, X, Database,
   Link2, FileText, BookOpen, Zap, AlertTriangle,
-  ChevronDown,
+  ChevronDown, ExternalLink,
 } from 'lucide-react'
 import type { Resource, UniversityLink } from '@/lib/data'
+
+// Converts a Google Drive share link to a direct download/embed URL
+function transformGDriveUrl(url: string): string {
+  // Handle https://drive.google.com/file/d/FILE_ID/view
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/)
+  if (fileMatch) {
+    return `https://drive.google.com/file/d/${fileMatch[1]}/preview`
+  }
+  // Handle https://drive.google.com/open?id=FILE_ID
+  const openMatch = url.match(/drive\.google\.com\/open\?id=([\w-]+)/)
+  if (openMatch) {
+    return `https://drive.google.com/file/d/${openMatch[1]}/preview`
+  }
+  return url
+}
 
 // ────────────────────────────────────────────────────────────
 // Tiny shared components
@@ -161,8 +170,6 @@ export default function AdminDashboard() {
   const [resourceForm, setResourceForm] = useState(blankResource())
   const [linkForm, setLinkForm] = useState(blankLink())
   const [saving, setSaving] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [seeding, setSeeding] = useState(false)
   const [seedMsg, setSeedMsg] = useState('')
@@ -202,94 +209,41 @@ export default function AdminDashboard() {
   const openAddResource = () => {
     setEditingId(null)
     setResourceForm(blankResource())
-    setSelectedFile(null)
-    setUploadProgress(null)
     setShowForm(true)
   }
   const openEditResource = (r: Resource) => {
     setEditingId(r.id)
     setResourceForm({ title: r.title, description: r.description, type: r.type, subject: r.subject, tags: r.tags, url: r.url, size: r.size || '', date: r.date || '' })
-    setSelectedFile(null)
-    setUploadProgress(null)
     setShowForm(true)
   }
   const saveResource = async () => {
-    // If it's a file type, require either a selected file OR an existing URL (for edits)
-    const isFile = resourceForm.type === 'pdf' || resourceForm.type === 'doc'
-    if (!resourceForm.title || !resourceForm.subject) return
-    if (!isFile && !resourceForm.url) return
-    if (isFile && !selectedFile && !resourceForm.url) return
-
+    if (!resourceForm.title || !resourceForm.subject || !resourceForm.url) return
     setSaving(true)
     try {
-      let finalUrl = resourceForm.url
-      let finalSize = resourceForm.size
-
-      // Handle File Upload
-      if (isFile && selectedFile) {
-        setUploadProgress(0)
-        const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`)
-        const uploadTask = uploadBytesResumable(fileRef, selectedFile)
-
-        await new Promise<void>((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            (snap) => {
-              const prog = (snap.bytesTransferred / snap.totalBytes) * 100
-              setUploadProgress(prog)
-            },
-            (err) => reject(err),
-            async () => {
-              try {
-                finalUrl = await getDownloadURL(uploadTask.snapshot.ref)
-                const mb = (selectedFile.size / (1024 * 1024)).toFixed(1)
-                finalSize = `${mb} MB`
-                resolve()
-              } catch (e) {
-                reject(e)
-              }
-            }
-          )
-        })
-      }
-
+      // Auto-transform Google Drive URLs so the PDF viewer can embed them
+      const finalUrl = transformGDriveUrl(resourceForm.url)
       const payload = {
         ...resourceForm,
         url: finalUrl,
-        size: finalSize,
         tags: typeof resourceForm.tags === 'string'
           ? (resourceForm.tags as unknown as string).split(',').map((t) => t.trim()).filter(Boolean)
           : resourceForm.tags,
         updatedAt: serverTimestamp(),
       }
-      
       if (editingId) {
         await updateDoc(doc(db, 'resources', editingId), payload)
       } else {
         await addDoc(collection(db, 'resources'), { ...payload, createdAt: serverTimestamp() })
       }
-      
       setSaving(false)
-      setUploadProgress(null)
-      setSelectedFile(null)
       setShowForm(false)
     } catch (err: any) {
-      console.error("Save Resource Error:", err)
-      alert("Error saving: " + (err.message || 'Unknown error. Check console.'))
+      console.error('Save Resource Error:', err)
+      alert('Error saving: ' + (err.message || 'Unknown error. Check console.'))
       setSaving(false)
-      setUploadProgress(null)
     }
   }
   const deleteResource = async (r: Resource) => {
-    // If it's a hosted file, delete from Storage first
-    if (r.url.includes('firebasestorage.googleapis.com')) {
-      try {
-        const fileRef = ref(storage, r.url)
-        await deleteObject(fileRef)
-      } catch (e) {
-        console.error('Failed to delete file from storage', e)
-      }
-    }
     await deleteDoc(doc(db, 'resources', r.id))
     setDeleteConfirm(null)
   }
@@ -495,55 +449,29 @@ export default function AdminDashboard() {
                         <Input label="Description" value={resourceForm.description} onChange={(v) => setResourceForm({ ...resourceForm, description: v })} placeholder="Brief description of the resource" />
                       </div>
                       <Select label="Type" value={resourceForm.type} onChange={(v) => setResourceForm({ ...resourceForm, type: v as Resource['type'] })} options={[{ value: 'pdf', label: 'PDF' }, { value: 'doc', label: 'Doc' }, { value: 'link', label: 'Link' }, { value: 'video', label: 'Video' }]} />
-                      
-                      {(resourceForm.type === 'pdf' || resourceForm.type === 'doc') ? (
-                        <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <label style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Upload File{(!editingId || !resourceForm.url) && <span style={{ color: '#f87171', marginLeft: 2 }}>*</span>}</label>
-                          <div style={{ 
-                            position: 'relative', overflow: 'hidden', padding: '16px', 
-                            background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.2)', 
-                            borderRadius: 12, textAlign: 'center', transition: 'all 0.2s',
-                          }}>
-                            <input
-                              type="file"
-                              accept={resourceForm.type === 'pdf' ? '.pdf' : '.doc,.docx,.txt'}
-                              onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                              style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', zIndex: 10 }}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                              <FileText size={24} style={{ color: selectedFile ? '#a78bfa' : 'rgba(255,255,255,0.2)' }} />
-                              {selectedFile ? (
-                                <p style={{ fontSize: 13, color: '#c4b5fd', fontWeight: 500 }}>{selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(1)} MB)</p>
-                              ) : (
-                                <div>
-                                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', fontWeight: 500, marginBottom: 2 }}>Click or drag file to upload</p>
-                                  {resourceForm.url && <p style={{ fontSize: 11, color: '#a78bfa' }}>File already attached. Upload a new one to replace.</p>}
-                                </div>
-                              )}
+
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <Input
+                          label={resourceForm.type === 'pdf' || resourceForm.type === 'doc' ? 'Google Drive / PDF URL' : 'URL / Link'}
+                          value={resourceForm.url}
+                          onChange={(v) => setResourceForm({ ...resourceForm, url: v })}
+                          placeholder={resourceForm.type === 'pdf' || resourceForm.type === 'doc'
+                            ? 'https://drive.google.com/file/d/.../view?usp=sharing'
+                            : 'https://...'}
+                          required
+                        />
+                        {(resourceForm.type === 'pdf' || resourceForm.type === 'doc') && (
+                          <div style={{ marginTop: 8, padding: '10px 14px', background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 10, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                            <ExternalLink size={14} style={{ color: '#a78bfa', marginTop: 1, flexShrink: 0 }} />
+                            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
+                              <strong style={{ color: '#a78bfa' }}>How to get the link:</strong> Open the file in Google Drive → Right-click → <em>Share</em> → <em>Copy Link</em>. Paste it here and we'll auto-convert it to an embeddable preview URL!
                             </div>
-                            
-                            {/* Inner Progress Bar */}
-                            {uploadProgress !== null && (
-                              <div style={{ position: 'absolute', bottom: 0, left: 0, height: 3, background: 'rgba(255,255,255,0.1)', width: '100%' }}>
-                                <motion.div 
-                                  initial={{ width: 0 }} 
-                                  animate={{ width: `${uploadProgress}%` }} 
-                                  style={{ height: '100%', background: 'linear-gradient(90deg, #06b6d4, #8b5cf6)' }} 
-                                />
-                              </div>
-                            )}
                           </div>
-                        </div>
-                      ) : (
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <Input label="URL / Link" value={resourceForm.url} onChange={(v) => setResourceForm({ ...resourceForm, url: v })} placeholder="https://..." required />
-                        </div>
-                      )}
+                        )}
+                      </div>
 
                       <Input label="Tags (comma-separated)" value={Array.isArray(resourceForm.tags) ? resourceForm.tags.join(', ') : resourceForm.tags as unknown as string} onChange={(v) => setResourceForm({ ...resourceForm, tags: v.split(',').map(t => t.trim()).filter(Boolean) })} placeholder="DSA, Arrays, Trees" />
-                      {resourceForm.type !== 'pdf' && resourceForm.type !== 'doc' && (
-                        <Input label="File Size (optional)" value={resourceForm.size || ''} onChange={(v) => setResourceForm({ ...resourceForm, size: v })} placeholder="4.2 MB" />
-                      )}
+                      <Input label="File Size (optional)" value={resourceForm.size || ''} onChange={(v) => setResourceForm({ ...resourceForm, size: v })} placeholder="4.2 MB" />
                       <Input label="Date (optional)" value={resourceForm.date || ''} onChange={(v) => setResourceForm({ ...resourceForm, date: v })} type="date" />
                     </div>
                     <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>

@@ -1,6 +1,13 @@
 import { motion } from 'framer-motion'
 import { X, Download, FileText } from 'lucide-react'
 
+// If it's already a Drive /preview link, use it as-is.
+// Otherwise wrap with Google Docs Viewer to natively render PDFs with no CORS issues.
+function getEmbedUrl(url: string): string {
+  if (url.includes('drive.google.com')) return url
+  return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+}
+
 export default function PDFViewerModal({
   url,
   title,
@@ -10,6 +17,8 @@ export default function PDFViewerModal({
   title: string
   onClose: () => void
 }) {
+  const embedUrl = getEmbedUrl(url)
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -19,7 +28,7 @@ export default function PDFViewerModal({
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: 'rgba(3, 3, 8, 0.85)',
+        background: 'rgba(3, 3, 8, 0.9)',
         backdropFilter: 'blur(20px)',
         display: 'flex',
         flexDirection: 'column',
@@ -48,10 +57,11 @@ export default function PDFViewerModal({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Download: open in new tab (direct download attribute doesn't work cross-origin) */}
           <a
             href={url}
             target="_blank"
-            download
+            rel="noopener noreferrer"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -93,20 +103,21 @@ export default function PDFViewerModal({
         <div style={{
           width: '100%',
           height: '100%',
-          background: '#e5e7eb', // Light background for the PDF document itself
+          background: '#f3f4f6',
           borderRadius: 16,
           overflow: 'hidden',
           boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
           border: '1px solid rgba(255,255,255,0.1)',
         }}>
-          {/* We use an iframe pointed to the PDF URL. Appending #toolbar=0 hides the default browser PDF controls for a cleaner look. */}
           <iframe
-            src={`${url}#toolbar=0&navpanes=0`}
+            src={embedUrl}
             style={{ width: '100%', height: '100%', border: 'none' }}
             title={title}
+            allow="autoplay"
           />
         </div>
       </div>
     </motion.div>
   )
 }
+
