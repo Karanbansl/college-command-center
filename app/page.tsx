@@ -1,17 +1,16 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import CommandBar from '@/components/CommandBar'
 import HeroSection from '@/components/HeroSection'
 import QuickAccessNode from '@/components/QuickAccessNode'
 import ResourceGrid from '@/components/ResourceGrid'
 import Footer from '@/components/Footer'
 import { useResources } from '@/lib/useResources'
-import { useState } from 'react'
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeSubject, setActiveSubject] = useState('All')
   const { universityLinks, subjects, resources, loading } = useResources()
 
   return (
@@ -20,55 +19,76 @@ export default function HomePage() {
       <CommandBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        activeSubject={activeSubject}
-        setActiveSubject={setActiveSubject}
+        activeSubject={'All'}
+        setActiveSubject={() => {}}
         subjects={subjects}
       />
 
-      {/* Main content */}
-      <main>
-        {/* Hero + 3D Scene */}
-        <HeroSection />
+      {/* Compact Hero */}
+      <HeroSection />
 
-        {/* Divider */}
-        <div className="relative">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
-        </div>
+      {/* ── Dashboard Split Pane ── */}
+      <div
+        className="max-w-[1600px] mx-auto split-pane-layout"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '260px 1fr',
+          gap: '0',
+          alignItems: 'start',
+          padding: '0 16px 0 16px',
+        }}
+      >
+        {/* ── LEFT: Sticky Sidebar ── */}
+        <aside
+          className="split-pane-sidebar"
+          style={{
+            position: 'sticky',
+            top: 72,
+            height: 'calc(100vh - 88px)',
+            overflowY: 'auto',
+            paddingRight: 12,
+            paddingTop: 24,
+            paddingBottom: 24,
+            scrollbarWidth: 'none',
+          }}
+        >
+          <QuickAccessNode links={universityLinks} />
+        </aside>
 
-        {/* Quick Access Node: University links from Firestore */}
-        <QuickAccessNode links={universityLinks} />
+        {/* ── RIGHT: Resource Grid (main area) ── */}
+        <main style={{ minWidth: 0, paddingLeft: 12 }}>
+          {/* Thin vertical separator */}
+          <div style={{
+            position: 'sticky',
+            top: 72,
+            height: 1,
+            background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)',
+            marginBottom: 0,
+            marginLeft: -12,
+            zIndex: 1,
+          }} />
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
-        </div>
+          <ResourceGrid
+            searchQuery={searchQuery}
+            resources={resources}
+            subjects={subjects}
+            loading={loading}
+          />
 
-        {/* Resource Grid — live data */}
-        <ResourceGrid
-          searchQuery={searchQuery}
-          resources={resources}
-          subjects={subjects}
-          loading={loading}
-        />
-
-        {/* Footer */}
-        <Footer />
-      </main>
+          <Footer />
+        </main>
+      </div>
 
       {/* Ambient corner glows */}
       <div
         aria-hidden="true"
-        className="fixed bottom-0 left-0 w-80 h-80 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 0% 100%, rgba(139,92,246,0.06) 0%, transparent 60%)',
-        }}
+        className="fixed bottom-0 left-0 w-96 h-96 pointer-events-none"
+        style={{ background: 'radial-gradient(circle at 0% 100%, rgba(139,92,246,0.06) 0%, transparent 60%)' }}
       />
       <div
         aria-hidden="true"
-        className="fixed top-0 right-0 w-80 h-80 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 100% 0%, rgba(6,182,212,0.05) 0%, transparent 60%)',
-        }}
+        className="fixed top-0 right-0 w-96 h-96 pointer-events-none"
+        style={{ background: 'radial-gradient(circle at 100% 0%, rgba(6,182,212,0.05) 0%, transparent 60%)' }}
       />
     </div>
   )

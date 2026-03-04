@@ -159,3 +159,33 @@ body {
   }
 }
 
+/* ─── Split-pane Layout — Responsive ─────────────────────── */
+/* On screens <900px, collapse sidebar above main area */
+@media screen and (max-width: 900px) {
+  .split-pane-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .split-pane-sidebar {
+    position: static !important;
+    height: auto !important;
+    overflow-y: visible !important;
+    padding-right: 0 !important;
+    /* Horizontal scroll strip */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .split-pane-sidebar nav {
+    flex-direction: row !important;
+    gap: 8px !important;
+    min-width: max-content;
+  }
+  .split-pane-sidebar nav > div:first-child {
+    display: none !important; /* hide section header in mobile strip */
+  }
+}
+
