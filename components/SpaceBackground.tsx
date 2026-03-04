@@ -8,6 +8,50 @@ interface SpaceBackgroundProps {
   count?: number
 }
 
+function Planet() {
+  const planetRef = useRef<THREE.Mesh>(null)
+
+  // Slowly rotate the planet
+  useFrame((state) => {
+    if (planetRef.current) {
+      planetRef.current.rotation.y = state.clock.elapsedTime * 0.03
+    }
+  })
+
+  // We place the planet far back and off to the right
+  return (
+    <group position={[140, 70, -250]}>
+      {/* Lighting to create a premium cinematic crescent effect */}
+      <directionalLight position={[-50, 30, 20]} intensity={4} color="#8b5cf6" />
+      <directionalLight position={[50, -30, -20]} intensity={0.5} color="#06b6d4" />
+      <ambientLight intensity={0.02} color="#ffffff" />
+
+      {/* The solid dark body of the planet */}
+      <mesh ref={planetRef}>
+        <sphereGeometry args={[60, 64, 64]} />
+        <meshStandardMaterial
+          color="#010108"
+          roughness={0.9}
+          metalness={0.1}
+        />
+      </mesh>
+
+      {/* The atmospheric glow layer (additive blending on a slightly larger sphere) */}
+      <mesh>
+        <sphereGeometry args={[62, 64, 64]} />
+        <meshBasicMaterial
+          color="#8b5cf6"
+          transparent
+          opacity={0.12}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </mesh>
+    </group>
+  )
+}
+
 export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) {
   const pointsRef = useRef<THREE.Points>(null)
 
@@ -66,34 +110,40 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
   }, [])
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
+    <group>
+      {/* 3D Planet */}
+      <Planet />
+
+      {/* Starfield Particles */}
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[positions, 3]}
+            count={positions.length / 3}
+            array={positions}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-scale"
+            args={[scales, 1]}
+            count={scales.length}
+            array={scales}
+            itemSize={1}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          size={2.2}
+          sizeAttenuation={true}
+          color="#ffffff"
+          map={particleTexture}
+          transparent={true}
+          opacity={0.8}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          fog={true}
         />
-        <bufferAttribute
-          attach="attributes-scale"
-          args={[scales, 1]}
-          count={scales.length}
-          array={scales}
-          itemSize={1}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={2.2}
-        sizeAttenuation={true}
-        color="#ffffff"
-        map={particleTexture}
-        transparent={true}
-        opacity={0.8}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        fog={true}
-      />
-    </points>
+      </points>
+    </group>
   )
 }
