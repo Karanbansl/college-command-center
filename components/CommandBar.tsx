@@ -125,7 +125,7 @@ export default function CommandBar({
                 <span className="text-white font-bold text-sm">RC</span>
               </div>
               <span className="font-semibold text-white/90 hidden sm:block tracking-tight">
-                Resource <span className="gradient-text">Command Center</span>
+                Resource <span className="gradient-text">Center</span>
               </span>
             </div>
 

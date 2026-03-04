@@ -53,7 +53,7 @@ export default function HeroSection() {
         >
           <div className="flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-violet-500/25 text-xs text-violet-300/80">
             <Sparkles size={12} className="text-violet-400" />
-            <span>Your College Resource Command Center</span>
+            <span>One stop college resources for CoE students!</span>
             <Sparkles size={12} className="text-violet-400" />
           </div>
         </motion.div>
@@ -93,7 +93,7 @@ export default function HeroSection() {
           className="text-lg sm:text-xl text-white/45 max-w-2xl mx-auto mb-10 leading-relaxed font-light"
         >
           All your study material, official portals, and academic resources — 
-          organized beautifully in one premium command center.
+          organized beautifully in one place.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -131,16 +131,16 @@ export default function HeroSection() {
         </motion.div>
 
         {/* Stats */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.2 }}
           className="flex items-center justify-center gap-8 mt-16 text-center"
         >
           {[
-            { value: '12+', label: 'Resources' },
-            { value: '6', label: 'Portals' },
-            { value: '8', label: 'Subjects' },
+            // { value: '12+', label: 'Resources' },
+            // { value: '6', label: 'Portals' },
+            // { value: '8', label: 'Subjects' },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -153,7 +153,7 @@ export default function HeroSection() {
               <span className="text-xs text-white/35 mt-1">{stat.label}</span>
             </motion.div>
           ))}
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Scroll indicator */}
