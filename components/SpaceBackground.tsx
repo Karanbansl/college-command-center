@@ -45,6 +45,26 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
     }
   })
 
+  // Generate a soft circular glow texture dynamically
+  const particleTexture = useMemo(() => {
+    if (typeof window === 'undefined') return null
+    const canvas = document.createElement('canvas')
+    canvas.width = 32
+    canvas.height = 32
+    const context = canvas.getContext('2d')
+    if (context) {
+      const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16)
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
+      gradient.addColorStop(0.2, 'rgba(240, 248, 255, 0.8)')
+      gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)')
+      gradient.addColorStop(1, 'rgba(3, 3, 18, 0)')
+      context.fillStyle = gradient
+      context.fillRect(0, 0, 32, 32)
+    }
+    const texture = new THREE.CanvasTexture(canvas)
+    return texture
+  }, [])
+
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
@@ -64,11 +84,14 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
         />
       </bufferGeometry>
       <pointsMaterial
-        size={1.5}
+        size={2.2}
         sizeAttenuation={true}
         color="#ffffff"
-        transparent
+        map={particleTexture}
+        transparent={true}
         opacity={0.8}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
         fog={true}
       />
     </points>

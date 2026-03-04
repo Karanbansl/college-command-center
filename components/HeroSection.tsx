@@ -64,9 +64,9 @@ export default function HeroSection({ links }: HeroSectionProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030308]/70 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-between px-6 sm:px-10 py-8 max-w-7xl">
+      <div className="relative z-10 h-full flex flex-col items-center justify-between px-6 sm:px-10 pt-12 pb-10 max-w-7xl mx-auto">
         {/* Top: Badge + Headline + Subtitle */}
-        <div className="max-w-2xl">
+        <div className="max-w-3xl flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
