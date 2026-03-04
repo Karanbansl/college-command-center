@@ -119,12 +119,15 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ scale: 1.035, zIndex: 10 }}
+      whileTap={{ scale: 0.98 }}
       transition={{
         duration: 0.5,
         delay: index * 0.07,
         ease: [0.23, 1, 0.32, 1],
+        scale: { type: 'spring', stiffness: 300, damping: 22 },
       }}
-      style={{ perspective: 1000 }}
+      style={{ perspective: 1000, position: 'relative' }}
     >
       <motion.div
         ref={cardRef}
