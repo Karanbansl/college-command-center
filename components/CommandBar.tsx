@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Command, X, FileText, Link, ChevronRight } from 'lucide-react'
+import { Search, Command, X, FileText, Link, ChevronRight, Sun, Moon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { resources } from '@/lib/data'
 
 interface CommandBarProps {
@@ -26,6 +27,14 @@ export default function CommandBar({
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const overlayInputRef = useRef<HTMLInputElement>(null)
   const resultRefs = useRef<(HTMLAnchorElement | null)[]>([])
+
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure theme runs only on client to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Handle scroll for nav opacity
   useEffect(() => {
@@ -110,7 +119,7 @@ export default function CommandBar({
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-[rgba(3,3,8,0.85)] backdrop-blur-xl border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+            ? 'bg-[var(--bg-base)]/85 backdrop-blur-xl border-b border-[var(--glass-border)] shadow-lg'
             : 'bg-transparent'
         }`}
         initial={{ y: -80, opacity: 0 }}
@@ -122,9 +131,9 @@ export default function CommandBar({
             {/* Logo */}
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center shadow-glow-violet">
-                <span className="text-white font-bold text-sm">RC</span>
+                <span className="text-foreground font-bold text-sm">RC</span>
               </div>
-              <span className="font-semibold text-white/90 hidden sm:block tracking-tight">
+              <span className="font-semibold text-[color:var(--text-main)] opacity-90 hidden sm:block tracking-tight transition-colors">
                 Resource <span className="gradient-text">Center</span>
               </span>
             </div>
@@ -138,24 +147,45 @@ export default function CommandBar({
                 setSelectedIndex(-1)
                 setTimeout(() => overlayInputRef.current?.focus(), 50)
               }}
-              className="flex items-center gap-3 px-4 py-2 rounded-xl glass-card border border-white/10
-                         text-white/50 hover:text-white/80 hover:border-violet-500/30 transition-all duration-300
+              className="flex items-center gap-3 px-4 py-2 rounded-xl glass-card border border-[var(--glass-border)]
+                         text-[color:var(--text-muted)] hover:text-[color:var(--text-main)] hover:border-violet-500/30 transition-all duration-300
                          min-w-[200px] sm:min-w-[280px] text-sm"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Search size={14} />
               <span className="flex-1 text-left">Search resources...</span>
-              <kbd className="hidden sm:flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/30 font-mono">
+              <kbd className="hidden sm:flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-[var(--text-main)]/5 border border-[var(--glass-border)] text-[color:var(--text-muted)] font-mono">
                 <Command size={10} /> K
               </kbd>
             </motion.button>
 
-            {/* Nav links */}
-            <div className="hidden md:flex items-center gap-6 text-sm text-white/50">
-              <a href="#resources" className="hover:text-white/90 transition-colors">Resources</a>
-              <a href="#quick-links" className="hover:text-white/90 transition-colors">Quick Links</a>
-              <a href="#about" className="hover:text-white/90 transition-colors">About</a>
+            {/* Nav links and Theme Toggle */}
+            <div className="hidden md:flex items-center gap-6 text-sm text-[color:var(--text-muted)]">
+              <a href="#resources" className="hover:text-[color:var(--text-main)] transition-colors">Resources</a>
+              <a href="#quick-links" className="hover:text-[color:var(--text-main)] transition-colors">Quick Links</a>
+              <a href="#about" className="hover:text-[color:var(--text-main)] transition-colors">About</a>
+              
+              {/* Theme Toggle */}
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="p-2 ml-2 rounded-lg hover:bg-[var(--glass-hover)] transition-colors text-[color:var(--text-muted)] hover:text-violet-500"
+                  aria-label="Toggle theme"
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={theme}
+                      initial={{ y: -20, opacity: 0, rotate: -90 }}
+                      animate={{ y: 0, opacity: 1, rotate: 0 }}
+                      exit={{ y: 20, opacity: 0, rotate: 90 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
+                    </motion.div>
+                  </AnimatePresence>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -182,9 +212,9 @@ export default function CommandBar({
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <div className="glass-card border border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.7)] overflow-hidden">
+              <div className="glass-card border border-foreground/10 shadow-[0_25px_80px_rgba(0,0,0,0.7)] overflow-hidden">
                 {/* Search input */}
-                <div className="flex items-center gap-3 px-4 py-4 border-b border-white/8">
+                <div className="flex items-center gap-3 px-4 py-4 border-b border-foreground/8">
                   <Search size={18} className="text-violet-400 flex-shrink-0" />
                   <input
                     ref={overlayInputRef}
@@ -197,7 +227,7 @@ export default function CommandBar({
                       setSearchQuery(e.target.value)
                     }}
                     onKeyDown={handleInputKeyDown}
-                    className="flex-1 bg-transparent text-white placeholder-white/30 outline-none text-base"
+                    className="flex-1 bg-transparent text-foreground placeholder-foreground/30 outline-none text-base"
                     aria-label="Search resources"
                     aria-activedescendant={
                       selectedIndex >= 0
@@ -212,7 +242,7 @@ export default function CommandBar({
                   <button
                     id="command-close-btn"
                     onClick={closeCommand}
-                    className="p-1 rounded-lg hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors"
+                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/40 hover:text-foreground/80 transition-colors"
                     aria-label="Close search"
                   >
                     <X size={16} />
@@ -247,7 +277,7 @@ export default function CommandBar({
                               className={`flex items-center gap-3 px-4 py-3 transition-all duration-150 cursor-pointer group border-l-2
                                 ${isSelected
                                   ? 'bg-violet-500/12 border-violet-500/60'
-                                  : 'border-transparent hover:bg-white/5 hover:border-white/10'
+                                  : 'border-transparent hover:bg-foreground/5 hover:border-foreground/10'
                                 }`}
                               onClick={closeCommand}
                               onMouseEnter={() => setSelectedIndex(i)}
@@ -262,17 +292,17 @@ export default function CommandBar({
                                 {r.type === 'pdf' ? <FileText size={14} /> : <Link size={14} />}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className={`text-sm truncate transition-colors ${isSelected ? 'text-white' : 'text-white/90'}`}>
+                                <p className={`text-sm truncate transition-colors ${isSelected ? 'text-foreground' : 'text-foreground/90'}`}>
                                   {r.title}
                                 </p>
-                                <p className="text-xs text-white/40 truncate">
+                                <p className="text-xs text-foreground/40 truncate">
                                   {r.subject} • {r.tags.slice(0, 2).join(', ')}
                                 </p>
                               </div>
                               <ChevronRight
                                 size={14}
                                 className={`flex-shrink-0 transition-colors ${
-                                  isSelected ? 'text-violet-400' : 'text-white/20 group-hover:text-white/50'
+                                  isSelected ? 'text-violet-400' : 'text-foreground/20 group-hover:text-foreground/50'
                                 }`}
                               />
                             </motion.a>
@@ -280,27 +310,27 @@ export default function CommandBar({
                         })}
                       </div>
                     ) : (
-                      <div className="py-12 text-center text-white/30 text-sm">
+                      <div className="py-12 text-center text-foreground/30 text-sm">
                         No results for &ldquo;{localQuery}&rdquo;
                       </div>
                     )
                   ) : (
-                    <div className="py-6 text-center text-white/30 text-sm">
+                    <div className="py-6 text-center text-foreground/30 text-sm">
                       Start typing to search resources...
                     </div>
                   )}
                 </div>
 
                 {/* Footer hint bar */}
-                <div className="px-4 py-2.5 border-t border-white/5 flex items-center gap-4 text-xs text-white/25">
+                <div className="px-4 py-2.5 border-t border-foreground/5 flex items-center gap-4 text-xs text-foreground/25">
                   <span>
-                    <kbd className="font-mono text-white/35 px-1">↑↓</kbd> navigate
+                    <kbd className="font-mono text-foreground/35 px-1">↑↓</kbd> navigate
                   </span>
                   <span>
-                    <kbd className="font-mono text-white/35 px-1">↵</kbd> open
+                    <kbd className="font-mono text-foreground/35 px-1">↵</kbd> open
                   </span>
                   <span>
-                    <kbd className="font-mono text-white/35 px-1">esc</kbd> close
+                    <kbd className="font-mono text-foreground/35 px-1">esc</kbd> close
                   </span>
                 </div>
               </div>

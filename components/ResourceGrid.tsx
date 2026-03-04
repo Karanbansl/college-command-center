@@ -45,7 +45,7 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
             <span className="text-xs font-semibold tracking-[0.2em] text-violet-400/70 uppercase mb-2 block">
               Study Materials
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Resource <span className="gradient-text">Library</span>
             </h2>
           </motion.div>
@@ -58,17 +58,17 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="flex items-center gap-1.5 text-xs text-white/35">
+            <span className="flex items-center gap-1.5 text-xs text-foreground/35">
               <Filter size={12} />
               {loading ? '…' : `${filtered.length} resource${filtered.length !== 1 ? 's' : ''}`}
             </span>
-            <div className="flex items-center gap-1 p-1 rounded-lg glass-card border border-white/8">
+            <div className="flex items-center gap-1 p-1 rounded-lg glass-card border border-foreground/8">
               <button
                 id="view-grid-btn"
                 onClick={() => setViewMode('grid')}
                 aria-label="Grid view"
                 className={`p-1.5 rounded-md transition-all duration-200 ${
-                  viewMode === 'grid' ? 'bg-violet-500/20 text-violet-400' : 'text-white/30 hover:text-white/60'
+                  viewMode === 'grid' ? 'bg-violet-500/20 text-violet-400' : 'text-foreground/30 hover:text-foreground/60'
                 }`}
               >
                 <LayoutGrid size={14} />
@@ -78,7 +78,7 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
                 onClick={() => setViewMode('list')}
                 aria-label="List view"
                 className={`p-1.5 rounded-md transition-all duration-200 ${
-                  viewMode === 'list' ? 'bg-violet-500/20 text-violet-400' : 'text-white/30 hover:text-white/60'
+                  viewMode === 'list' ? 'bg-violet-500/20 text-violet-400' : 'text-foreground/30 hover:text-foreground/60'
                 }`}
               >
                 <List size={14} />
@@ -107,7 +107,7 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                 activeSubject === subject
                   ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
-                  : 'glass-card text-white/40 hover:text-white/70 border border-transparent hover:border-white/10'
+                  : 'glass-card text-foreground/40 hover:text-foreground/70 border border-transparent hover:border-foreground/10'
               }`}
             >
               {subject}
@@ -157,12 +157,12 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center py-24 gap-4 text-center"
               >
-                <div className="w-16 h-16 rounded-2xl glass-card border border-white/8 flex items-center justify-center">
-                  <Filter size={24} className="text-white/20" />
+                <div className="w-16 h-16 rounded-2xl glass-card border border-foreground/8 flex items-center justify-center">
+                  <Filter size={24} className="text-foreground/20" />
                 </div>
                 <div>
-                  <p className="text-white/50 text-sm font-medium mb-1">No resources found</p>
-                  <p className="text-white/25 text-xs">Try a different search or filter</p>
+                  <p className="text-foreground/50 text-sm font-medium mb-1">No resources found</p>
+                  <p className="text-foreground/25 text-xs">Try a different search or filter</p>
                 </div>
               </motion.div>
             )}

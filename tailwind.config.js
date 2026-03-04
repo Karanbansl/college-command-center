@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        foreground: 'rgb(var(--foreground-rgb) / <alpha-value>)',
         obsidian: {
           950: '#030308',
           900: '#0a0a14',
