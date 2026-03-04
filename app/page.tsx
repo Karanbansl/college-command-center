@@ -1,11 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import CommandBar from '@/components/CommandBar'
 import HeroSection from '@/components/HeroSection'
 import ResourceGrid from '@/components/ResourceGrid'
 import Footer from '@/components/Footer'
 import { useResources } from '@/lib/useResources'
+
+const DynamicSpaceBackground = dynamic(() => import('@/components/SpaceBackgroundCanvas'), {
+  ssr: false,
+})
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -13,8 +18,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen mesh-gradient noise-overlay relative">
-      {/* Star field — fixed behind everything */}
-      <div className="space-stars" aria-hidden="true" />
+      <DynamicSpaceBackground />
       {/* Nav */}
       <CommandBar
         searchQuery={searchQuery}
