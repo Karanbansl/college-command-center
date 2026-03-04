@@ -64,8 +64,8 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none mb-3"
         >
-          <span className="text-white block">Your Academic</span>
-          <span className="gradient-text block mt-1">Intelligence Hub.</span>
+          <span className="text-white block">Everything You Need.</span>
+          <span className="gradient-text block mt-1">Right Here.</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -73,9 +73,9 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.35 }}
-          className="text-sm text-white/40 leading-relaxed font-light"
+          className="text-sm text-white/35 leading-relaxed font-light"
         >
-          Study materials, official portals, and academic resources — organized beautifully in one place.
+          Notes, papers, portals, and every resource you need for college — all in one clean dashboard.
         </motion.p>
       </div>
     </section>

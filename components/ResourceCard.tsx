@@ -12,7 +12,12 @@ const typeConfig = {
     color: 'text-violet-400',
     bg: 'bg-violet-500/15',
     border: 'border-violet-500/20',
-    glow: 'rgba(139, 92, 246, 0.2)',
+    glow: 'rgba(139, 92, 246, 0.18)',
+    accent: '#8b5cf6',
+    accentBg: 'rgba(139,92,246,0.06)',
+    shimmer: 'via-violet-400/50',
+    tagBg: 'rgba(139,92,246,0.1)',
+    tagColor: 'rgba(167,139,250,0.7)',
   },
   link: {
     icon: Link2,
@@ -20,7 +25,12 @@ const typeConfig = {
     color: 'text-cyan-400',
     bg: 'bg-cyan-500/15',
     border: 'border-cyan-500/20',
-    glow: 'rgba(6, 182, 212, 0.2)',
+    glow: 'rgba(6, 182, 212, 0.18)',
+    accent: '#06b6d4',
+    accentBg: 'rgba(6,182,212,0.05)',
+    shimmer: 'via-cyan-400/50',
+    tagBg: 'rgba(6,182,212,0.08)',
+    tagColor: 'rgba(103,232,249,0.7)',
   },
   video: {
     icon: Link2,
@@ -28,7 +38,12 @@ const typeConfig = {
     color: 'text-rose-400',
     bg: 'bg-rose-500/15',
     border: 'border-rose-500/20',
-    glow: 'rgba(244, 63, 94, 0.2)',
+    glow: 'rgba(244, 63, 94, 0.18)',
+    accent: '#f43f5e',
+    accentBg: 'rgba(244,63,94,0.05)',
+    shimmer: 'via-rose-400/50',
+    tagBg: 'rgba(244,63,94,0.08)',
+    tagColor: 'rgba(253,164,175,0.7)',
   },
   doc: {
     icon: FileText,
@@ -36,7 +51,12 @@ const typeConfig = {
     color: 'text-emerald-400',
     bg: 'bg-emerald-500/15',
     border: 'border-emerald-500/20',
-    glow: 'rgba(16, 185, 129, 0.2)',
+    glow: 'rgba(16, 185, 129, 0.18)',
+    accent: '#10b981',
+    accentBg: 'rgba(16,185,129,0.05)',
+    shimmer: 'via-emerald-400/50',
+    tagBg: 'rgba(16,185,129,0.08)',
+    tagColor: 'rgba(110,231,183,0.7)',
   },
 }
 
@@ -118,6 +138,8 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           rotateX: rotateX,
           rotateY: rotateY,
           transformStyle: 'preserve-3d',
+          borderLeft: `3px solid ${config.accent}`,
+          background: `linear-gradient(135deg, ${config.accentBg} 0%, rgba(255,255,255,0.02) 60%)`,
         }}
         className="glass-card glass-card-hover cursor-pointer h-full relative overflow-hidden group"
         aria-label={`${resource.title} - ${resource.type}`}
@@ -134,17 +156,17 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           className="absolute inset-0 rounded-2xl pointer-events-none"
           animate={{
             boxShadow: isHovered
-              ? `0 0 40px ${config.glow}, inset 0 0 30px ${config.glow}`
+              ? `0 0 35px ${config.glow}, inset 0 0 20px ${config.glow}`
               : `0 0 0px transparent`,
           }}
           transition={{ duration: 0.3 }}
         />
 
-        {/* Shimmer line at top */}
-        <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+        {/* Shimmer line at top — uses the type's color */}
+        <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent ${config.shimmer} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
 
         {/* Card content */}
-        <div className="p-5 flex flex-col gap-3 h-full" style={{ transform: 'translateZ(0px)' }}>
+        <div className="p-4 flex flex-col gap-2.5 h-full" style={{ transform: 'translateZ(0px)' }}>
           {/* Header */}
           <div className="flex items-start justify-between gap-2">
             <div className={`flex items-center gap-2 px-2.5 py-1 rounded-lg ${config.bg} border ${config.border}`}>
@@ -169,20 +191,23 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           </p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-1.5">
-            {resource.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-white/5 text-white/40 border border-white/5"
-              >
-                <Tag size={9} />
-                {tag}
-              </span>
-            ))}
-          </div>
+          {resource.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {resource.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  style={{ background: config.tagBg, color: config.tagColor, border: 'none' }}
+                  className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-md"
+                >
+                  <Tag size={9} />
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-1 border-t border-white/5">
+          {/* Footer — only shown when there's something to display */}
+          <div className="flex items-center justify-between pt-1.5 border-t border-white/5" style={{ marginTop: 'auto' }}>
             <div className="flex items-center gap-3 text-xs text-white/30">
               {resource.size && (
                 <span className="flex items-center gap-1">
