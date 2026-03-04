@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output (GitHub Actions builds this fresh)
+.next/
+out/
+
+# Environment variables — NEVER commit secrets
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
