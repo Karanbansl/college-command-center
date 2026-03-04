@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: 'College Resource Command Center',
   description: 'A premium command center for accessing college resources, PDFs, official links, and more.',
   keywords: ['college resources', 'student portal', 'academic resources', 'study materials'],
-  manifest: '/manifest.json',
+  manifest: '/college-command-center/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     type: 'website',
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/college-command-center/favicon.ico',
+    apple: '/college-command-center/apple-touch-icon.png',
   },
 }
 
