@@ -59,9 +59,7 @@ export default function HeroSection({ links }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Gradient veils (reduced to fix dark tint over space background) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#010108]/60 to-transparent pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#010108]/40 pointer-events-none" />
+
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col items-center justify-between px-6 sm:px-10 pt-24 pb-10 max-w-7xl mx-auto">
