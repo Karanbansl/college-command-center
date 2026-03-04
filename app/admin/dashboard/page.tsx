@@ -221,53 +221,64 @@ export default function AdminDashboard() {
     if (isFile && !selectedFile && !resourceForm.url) return
 
     setSaving(true)
-    let finalUrl = resourceForm.url
-    let finalSize = resourceForm.size
+    try {
+      let finalUrl = resourceForm.url
+      let finalSize = resourceForm.size
 
-    // Handle File Upload
-    if (isFile && selectedFile) {
-      setUploadProgress(0)
-      const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`)
-      const uploadTask = uploadBytesResumable(fileRef, selectedFile)
+      // Handle File Upload
+      if (isFile && selectedFile) {
+        setUploadProgress(0)
+        const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`)
+        const uploadTask = uploadBytesResumable(fileRef, selectedFile)
 
-      await new Promise<void>((resolve, reject) => {
-        uploadTask.on(
-          'state_changed',
-          (snap) => {
-            const prog = (snap.bytesTransferred / snap.totalBytes) * 100
-            setUploadProgress(prog)
-          },
-          (err) => reject(err),
-          async () => {
-            finalUrl = await getDownloadURL(uploadTask.snapshot.ref)
-            const mb = (selectedFile.size / (1024 * 1024)).toFixed(1)
-            finalSize = `${mb} MB`
-            resolve()
-          }
-        )
-      })
-    }
+        await new Promise<void>((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snap) => {
+              const prog = (snap.bytesTransferred / snap.totalBytes) * 100
+              setUploadProgress(prog)
+            },
+            (err) => reject(err),
+            async () => {
+              try {
+                finalUrl = await getDownloadURL(uploadTask.snapshot.ref)
+                const mb = (selectedFile.size / (1024 * 1024)).toFixed(1)
+                finalSize = `${mb} MB`
+                resolve()
+              } catch (e) {
+                reject(e)
+              }
+            }
+          )
+        })
+      }
 
-    const payload = {
-      ...resourceForm,
-      url: finalUrl,
-      size: finalSize,
-      tags: typeof resourceForm.tags === 'string'
-        ? (resourceForm.tags as unknown as string).split(',').map((t) => t.trim()).filter(Boolean)
-        : resourceForm.tags,
-      updatedAt: serverTimestamp(),
+      const payload = {
+        ...resourceForm,
+        url: finalUrl,
+        size: finalSize,
+        tags: typeof resourceForm.tags === 'string'
+          ? (resourceForm.tags as unknown as string).split(',').map((t) => t.trim()).filter(Boolean)
+          : resourceForm.tags,
+        updatedAt: serverTimestamp(),
+      }
+      
+      if (editingId) {
+        await updateDoc(doc(db, 'resources', editingId), payload)
+      } else {
+        await addDoc(collection(db, 'resources'), { ...payload, createdAt: serverTimestamp() })
+      }
+      
+      setSaving(false)
+      setUploadProgress(null)
+      setSelectedFile(null)
+      setShowForm(false)
+    } catch (err: any) {
+      console.error("Save Resource Error:", err)
+      alert("Error saving: " + (err.message || 'Unknown error. Check console.'))
+      setSaving(false)
+      setUploadProgress(null)
     }
-    
-    if (editingId) {
-      await updateDoc(doc(db, 'resources', editingId), payload)
-    } else {
-      await addDoc(collection(db, 'resources'), { ...payload, createdAt: serverTimestamp() })
-    }
-    
-    setSaving(false)
-    setUploadProgress(null)
-    setSelectedFile(null)
-    setShowForm(false)
   }
   const deleteResource = async (r: Resource) => {
     // If it's a hosted file, delete from Storage first
