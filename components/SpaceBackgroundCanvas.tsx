@@ -1,6 +1,7 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
+import { Suspense } from 'react'
 import SpaceBackground from './SpaceBackground'
 
 export default function SpaceBackgroundCanvas() {
@@ -12,7 +13,9 @@ export default function SpaceBackgroundCanvas() {
         gl={{ antialias: false, alpha: true }}
       >
         <fog attach="fog" args={['#010108', 200, 600]} />
-        <SpaceBackground count={3000} />
+        <Suspense fallback={null}>
+          <SpaceBackground count={3000} />
+        </Suspense>
       </Canvas>
     </div>
   )

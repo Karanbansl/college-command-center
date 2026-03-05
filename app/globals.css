@@ -13,9 +13,9 @@
 /* Dark Theme (Default) */
 .dark {
   --foreground-rgb: 255 255 255;
+  --text-muted-rgb: 255 255 255;
   --bg-base: #050510; /* Slightly lighter than pure black for premium feel */
   --text-main: #e2e8f0;
-  --text-muted: rgba(255, 255, 255, 0.5);
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-hover: rgba(255, 255, 255, 0.07);
@@ -26,9 +26,9 @@
 /* Light Theme (Daylight & Sun) */
 .light {
   --foreground-rgb: 15 23 42;
+  --text-muted-rgb: 30 41 59; /* text-slate-800 for legibility in light mode */
   --bg-base: #fcfcf9; /* Premium warm off-white */
   --text-main: #0f172a;
-  --text-muted: rgba(15, 23, 42, 0.65);
   --glass-bg: rgba(255, 255, 255, 0.4); /* clearer glass against blue sky */
   --glass-border: rgba(255, 255, 255, 0.6);
   --glass-hover: rgba(255, 255, 255, 0.6);
@@ -92,6 +92,13 @@ body {
 /* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, #a78bfa 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .gradient-text {
+  background: linear-gradient(135deg, #4338ca 0%, #0369a1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

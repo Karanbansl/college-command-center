@@ -183,20 +183,20 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
               <Icon size={12} className={config.color} />
               <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
             </div>
-            <span className="text-xs text-foreground/30 font-medium px-2 py-1 rounded-lg bg-foreground/5">
+            <span className="text-xs text-muted font-medium px-2 py-1 rounded-lg bg-muted">
               {resource.subject}
             </span>
           </div>
 
           {/* Title */}
           <div style={{ transform: 'translateZ(20px)' }}>
-            <h3 className="font-semibold text-foreground/90 text-sm leading-snug line-clamp-2">
+            <h3 className="font-semibold text-muted text-sm leading-snug line-clamp-2">
               {resource.title}
             </h3>
           </div>
 
           {/* Description */}
-          <p className="text-xs text-foreground/45 leading-relaxed line-clamp-2 flex-1">
+          <p className="text-xs text-muted leading-relaxed line-clamp-2 flex-1">
             {resource.description}
           </p>
 
@@ -217,8 +217,8 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           )}
 
           {/* Footer — only shown when there's something to display */}
-          <div className="flex items-center justify-between pt-1.5 border-t border-foreground/5" style={{ marginTop: 'auto' }}>
-            <div className="flex items-center gap-3 text-xs text-foreground/30">
+          <div className="flex items-center justify-between pt-1.5 border-t border-muted" style={{ marginTop: 'auto' }}>
+            <div className="flex items-center gap-3 text-xs text-muted">
               {resource.size && (
                 <span className="flex items-center gap-1">
                   <HardDrive size={10} />

@@ -212,9 +212,9 @@ export default function CommandBar({
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <div className="glass-card border border-foreground/10 shadow-[0_25px_80px_rgba(0,0,0,0.7)] overflow-hidden">
+              <div className="glass-card border border-muted shadow-[0_25px_80px_rgba(0,0,0,0.7)] overflow-hidden">
                 {/* Search input */}
-                <div className="flex items-center gap-3 px-4 py-4 border-b border-foreground/8">
+                <div className="flex items-center gap-3 px-4 py-4 border-b border-muted">
                   <Search size={18} className="text-violet-400 flex-shrink-0" />
                   <input
                     ref={overlayInputRef}
@@ -227,7 +227,7 @@ export default function CommandBar({
                       setSearchQuery(e.target.value)
                     }}
                     onKeyDown={handleInputKeyDown}
-                    className="flex-1 bg-transparent text-foreground placeholder-foreground/30 outline-none text-base"
+                    className="flex-1 bg-transparent text-foreground placeholder-muted outline-none text-base"
                     aria-label="Search resources"
                     aria-activedescendant={
                       selectedIndex >= 0
@@ -242,7 +242,7 @@ export default function CommandBar({
                   <button
                     id="command-close-btn"
                     onClick={closeCommand}
-                    className="p-1 rounded-lg hover:bg-foreground/10 text-foreground/40 hover:text-foreground/80 transition-colors"
+                    className="p-1 rounded-lg hover:bg-muted text-muted hover:text-muted transition-colors"
                     aria-label="Close search"
                   >
                     <X size={16} />
@@ -277,7 +277,7 @@ export default function CommandBar({
                               className={`flex items-center gap-3 px-4 py-3 transition-all duration-150 cursor-pointer group border-l-2
                                 ${isSelected
                                   ? 'bg-violet-500/12 border-violet-500/60'
-                                  : 'border-transparent hover:bg-foreground/5 hover:border-foreground/10'
+                                  : 'border-transparent hover:bg-muted hover:border-muted'
                                 }`}
                               onClick={closeCommand}
                               onMouseEnter={() => setSelectedIndex(i)}
@@ -292,17 +292,17 @@ export default function CommandBar({
                                 {r.type === 'pdf' ? <FileText size={14} /> : <Link size={14} />}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className={`text-sm truncate transition-colors ${isSelected ? 'text-foreground' : 'text-foreground/90'}`}>
+                                <p className={`text-sm truncate transition-colors ${isSelected ? 'text-foreground' : 'text-muted'}`}>
                                   {r.title}
                                 </p>
-                                <p className="text-xs text-foreground/40 truncate">
+                                <p className="text-xs text-muted truncate">
                                   {r.subject} • {r.tags.slice(0, 2).join(', ')}
                                 </p>
                               </div>
                               <ChevronRight
                                 size={14}
                                 className={`flex-shrink-0 transition-colors ${
-                                  isSelected ? 'text-violet-400' : 'text-foreground/20 group-hover:text-foreground/50'
+                                  isSelected ? 'text-violet-400' : 'text-muted group-hover:text-muted'
                                 }`}
                               />
                             </motion.a>
@@ -310,27 +310,27 @@ export default function CommandBar({
                         })}
                       </div>
                     ) : (
-                      <div className="py-12 text-center text-foreground/30 text-sm">
+                      <div className="py-12 text-center text-muted text-sm">
                         No results for &ldquo;{localQuery}&rdquo;
                       </div>
                     )
                   ) : (
-                    <div className="py-6 text-center text-foreground/30 text-sm">
+                    <div className="py-6 text-center text-muted text-sm">
                       Start typing to search resources...
                     </div>
                   )}
                 </div>
 
                 {/* Footer hint bar */}
-                <div className="px-4 py-2.5 border-t border-foreground/5 flex items-center gap-4 text-xs text-foreground/25">
+                <div className="px-4 py-2.5 border-t border-muted flex items-center gap-4 text-xs text-muted">
                   <span>
-                    <kbd className="font-mono text-foreground/35 px-1">↑↓</kbd> navigate
+                    <kbd className="font-mono text-muted px-1">↑↓</kbd> navigate
                   </span>
                   <span>
-                    <kbd className="font-mono text-foreground/35 px-1">↵</kbd> open
+                    <kbd className="font-mono text-muted px-1">↵</kbd> open
                   </span>
                   <span>
-                    <kbd className="font-mono text-foreground/35 px-1">esc</kbd> close
+                    <kbd className="font-mono text-muted px-1">esc</kbd> close
                   </span>
                 </div>
               </div>

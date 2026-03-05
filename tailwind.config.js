@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       colors: {
         foreground: 'rgb(var(--foreground-rgb) / <alpha-value>)',
+        muted: 'rgb(var(--text-muted-rgb) / <alpha-value>)',
         obsidian: {
           950: '#030308',
           900: '#0a0a14',

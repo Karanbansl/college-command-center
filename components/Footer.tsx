@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer
       id="about"
-      className="border-t border-foreground/5 py-12 px-4 mt-8"
+      className="border-t border-muted py-12 px-4 mt-8"
       aria-label="Footer"
     >
       <div className="max-w-7xl mx-auto">
@@ -23,8 +23,8 @@ export default function Footer() {
               <span className="text-foreground font-bold text-sm">RC</span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground/80">Resource Command Center</p>
-              <p className="text-xs text-foreground/30">Your academic intelligence hub</p>
+              <p className="text-sm font-semibold text-muted">Resource Command Center</p>
+              <p className="text-xs text-muted">Your academic intelligence hub</p>
             </div>
           </motion.div>
 
@@ -34,10 +34,10 @@ export default function Footer() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex items-center gap-2 text-xs text-foreground/25"
+            className="flex items-center gap-2 text-xs text-muted"
           >
             <span>Press</span>
-            <kbd className="flex items-center gap-1 px-2 py-1 rounded-md bg-foreground/5 border border-foreground/10 font-mono text-foreground/40">
+            <kbd className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted border border-muted font-mono text-muted">
               <Command size={10} /> K
             </kbd>
             <span>to search</span>
@@ -56,7 +56,7 @@ export default function Footer() {
               id="footer-github"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg glass-card border border-foreground/8 text-foreground/30 hover:text-foreground/70 hover:border-foreground/15 transition-all duration-200"
+              className="p-2 rounded-lg glass-card border border-muted text-muted hover:text-muted hover:border-muted transition-all duration-200"
               aria-label="GitHub"
             >
               <Github size={16} />
@@ -66,7 +66,7 @@ export default function Footer() {
               id="footer-twitter"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg glass-card border border-foreground/8 text-foreground/30 hover:text-foreground/70 hover:border-foreground/15 transition-all duration-200"
+              className="p-2 rounded-lg glass-card border border-muted text-muted hover:text-muted hover:border-muted transition-all duration-200"
               aria-label="Twitter"
             >
               <Twitter size={16} />
@@ -80,7 +80,7 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="mt-8 pt-6 border-t border-foreground/5 flex items-center justify-center gap-2 text-xs text-foreground/20"
+          className="mt-8 pt-6 border-t border-muted flex items-center justify-center gap-2 text-xs text-muted"
         >
           <span>Built with</span>
           <Heart size={10} className="text-rose-400/60 fill-rose-400/60" />

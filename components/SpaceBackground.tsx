@@ -2,6 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
 import { useTheme } from 'next-themes'
@@ -24,7 +25,7 @@ function Planet({ isLight }: { isLight: boolean }) {
   const ambLightRef = useRef<THREE.AmbientLight>(null)
 
   // Target values cached to prevent recreation
-  const darkBodyColor = useMemo(() => new THREE.Color("#010108"), [])
+  const darkBodyColor = useMemo(() => new THREE.Color("#d1d5db"), []) // Slate-300 for realistic moon
   const lightBodyColor = useMemo(() => new THREE.Color("#fef08a"), [])
   const darkEmissive = useMemo(() => new THREE.Color("#000000"), [])
   const lightEmissive = useMemo(() => new THREE.Color("#facc15"), [])
@@ -72,20 +73,23 @@ function Planet({ isLight }: { isLight: boolean }) {
     }
   })
 
+  const moonTexture = useTexture('/moon-diffuse.jpg')
+
   // We place the planet far back and off to the right
   return (
     <group position={[140, 70, -250]}>
       {/* Dynamic Lighting */}
       <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#8b5cf6" />
       <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#06b6d4" />
-      <ambientLight ref={ambLightRef} intensity={0.02} color="#ffffff" />
+      <ambientLight ref={ambLightRef} intensity={0.05} color="#ffffff" />
 
-      {/* The solid body (Dark Planet -> Bright Sun) */}
+      {/* The solid body (Dark Moon -> Bright Sun) */}
       <mesh ref={planetRef}>
         <sphereGeometry args={[60, 64, 64]} />
         <meshStandardMaterial
           ref={bodyMatRef}
-          color="#010108"
+          color="#d1d5db"
+          map={moonTexture}
           roughness={0.9}
           metalness={0.1}
           emissive="#000000"
