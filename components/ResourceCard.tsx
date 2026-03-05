@@ -137,7 +137,8 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           rotateX, rotateY,
           transformStyle: 'preserve-3d',
           borderLeft: `4px solid ${config.accent}`,
-          background: `linear-gradient(135deg, rgba(${config.accentRgb},0.13) 0%, rgba(${config.accentRgb},0.04) 60%, var(--card-base-gradient) 100%)`,
+          backgroundColor: 'var(--glass-bg)',
+          backgroundImage: `linear-gradient(135deg, rgba(${config.accentRgb},0.12) 0%, transparent 100%)`,
         }}
         className="glass-card glass-card-hover cursor-pointer h-full relative overflow-hidden group"
         aria-label={`${resource.title} - ${resource.type}`}
@@ -186,13 +187,13 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
 
           {/* Title */}
           <div style={{ transform: 'translateZ(20px)' }}>
-            <h3 className="font-semibold text-muted text-sm leading-snug line-clamp-2">
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm leading-snug line-clamp-2">
               {resource.title}
             </h3>
           </div>
 
           {/* Description */}
-          <p className="text-xs text-muted leading-relaxed line-clamp-2 flex-1">
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed line-clamp-2 flex-1">
             {resource.description}
           </p>
 
@@ -212,8 +213,8 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           )}
 
           {/* Footer — only shown when there's something to display */}
-          <div className="flex items-center justify-between pt-1.5 border-t border-muted" style={{ marginTop: 'auto' }}>
-            <div className="flex items-center gap-3 text-xs text-muted">
+          <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/50 dark:border-white/10" style={{ marginTop: 'auto' }}>
+            <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
               {resource.size && (
                 <span className="flex items-center gap-1">
                   <HardDrive size={10} />
