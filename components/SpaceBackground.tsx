@@ -21,25 +21,22 @@ function Planet({ isLight }: { isLight: boolean }) {
   const atmosMatRef = useRef<THREE.MeshBasicMaterial>(null)
   
   const dirLight1Ref = useRef<THREE.DirectionalLight>(null)
-  const dirLight2Ref = useRef<THREE.DirectionalLight>(null)
   const ambLightRef = useRef<THREE.AmbientLight>(null)
   const sunOverlayMatRef = useRef<THREE.MeshBasicMaterial>(null)
 
   // Target values cached to prevent recreation
   const darkBodyColor = useMemo(() => new THREE.Color("#ffffff"), []) // Pure white realistic moon
   const lightBodyColor = useMemo(() => new THREE.Color("#fef08a"), [])
-  const darkEmissive = useMemo(() => new THREE.Color("#000000"), [])
+  // Provide a tiny baseline emissive to prevent pure pitch-black shadowing
+  const darkEmissive = useMemo(() => new THREE.Color("#222222"), [])
   const lightEmissive = useMemo(() => new THREE.Color("#facc15"), [])
 
   const darkAtmosColor = useMemo(() => new THREE.Color("#8b5cf6"), [])
   const lightAtmosColor = useMemo(() => new THREE.Color("#fde047"), [])
 
-  // Use pure white/grey lights in Dark Mode to keep the Moon naturally white
+  // Use pure white light in Dark Mode to keep the Moon naturally white
   const darkLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
   const lightLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
-  
-  const darkLight2 = useMemo(() => new THREE.Color("#cfcfcf"), [])
-  const lightLight2 = useMemo(() => new THREE.Color("#fef08a"), [])
 
   // Slowly rotate the planet and smoothly interpolate colors when theme changes
   useFrame((state, delta) => {
@@ -52,7 +49,7 @@ function Planet({ isLight }: { isLight: boolean }) {
     if (bodyMatRef.current) {
       bodyMatRef.current.color.lerp(isLight ? lightBodyColor : darkBodyColor, dampSpeed * delta)
       bodyMatRef.current.emissive.lerp(isLight ? lightEmissive : darkEmissive, dampSpeed * delta)
-      bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.6 : 0, dampSpeed, delta)
+      bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.6 : 0.8, dampSpeed, delta)
     }
 
     if (atmosMatRef.current) {
@@ -70,13 +67,8 @@ function Planet({ isLight }: { isLight: boolean }) {
       dirLight1Ref.current.intensity = THREE.MathUtils.damp(dirLight1Ref.current.intensity, isLight ? 2 : 4, dampSpeed, delta)
     }
 
-    if (dirLight2Ref.current) {
-      dirLight2Ref.current.color.lerp(isLight ? lightLight2 : darkLight2, dampSpeed * delta)
-      dirLight2Ref.current.intensity = THREE.MathUtils.damp(dirLight2Ref.current.intensity, isLight ? 1 : 0.5, dampSpeed, delta)
-    }
-
     if (ambLightRef.current) {
-      ambLightRef.current.intensity = THREE.MathUtils.damp(ambLightRef.current.intensity, isLight ? 0.8 : 0.02, dampSpeed, delta)
+      ambLightRef.current.intensity = THREE.MathUtils.damp(ambLightRef.current.intensity, isLight ? 0.8 : 0.4, dampSpeed, delta)
     }
   })
 
@@ -86,9 +78,9 @@ function Planet({ isLight }: { isLight: boolean }) {
   return (
     <group position={[-110, 80, -250]}>
       {/* Dynamic Lighting */}
-      <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#ffffff" />
-      <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#cfcfcf" />
-      <ambientLight ref={ambLightRef} intensity={0.05} color="#ffffff" />
+      {/* Target the light at the moon's position to illuminate its front-facing craters */}
+      <directionalLight ref={dirLight1Ref} position={[-80, 100, 50]} intensity={4} color="#ffffff" />
+      <ambientLight ref={ambLightRef} intensity={0.4} color="#ffffff" />
 
       {/* The solid body (Dark Moon -> Bright Sun) */}
       <mesh ref={planetRef}>
@@ -99,8 +91,8 @@ function Planet({ isLight }: { isLight: boolean }) {
           map={moonTexture}
           roughness={0.9}
           metalness={0.1}
-          emissive="#000000"
-          emissiveIntensity={0}
+          emissive="#222222"
+          emissiveIntensity={0.8}
         />
       </mesh>
 
