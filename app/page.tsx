@@ -12,6 +12,10 @@ const DynamicSpaceBackground = dynamic(() => import('@/components/SpaceBackgroun
   ssr: false,
 })
 
+const DynamicCloudBackground = dynamic(() => import('@/components/CloudBackground'), {
+  ssr: false,
+})
+
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const { universityLinks, subjects, resources, loading } = useResources()
@@ -19,6 +23,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen mesh-gradient noise-overlay relative">
       <DynamicSpaceBackground />
+      <DynamicCloudBackground />
       {/* Nav */}
       <CommandBar
         searchQuery={searchQuery}

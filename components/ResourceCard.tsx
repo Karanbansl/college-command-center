@@ -9,54 +9,50 @@ const typeConfig = {
   pdf: {
     icon: FileText,
     label: 'PDF',
-    color: 'text-violet-400',
-    bg: 'bg-violet-500/15',
+    color: 'text-violet-700 dark:text-violet-400',
+    bg: 'bg-violet-500/10 dark:bg-violet-500/15',
     border: 'border-violet-500/20',
     glow: 'rgba(139, 92, 246, 0.22)',
     accent: '#8b5cf6',
     accentRgb: '139,92,246',
     shimmer: 'via-violet-400/60',
-    tagBg: 'rgba(139,92,246,0.12)',
-    tagColor: 'rgba(167,139,250,0.85)',
+    tagClass: 'bg-violet-500/10 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   },
   link: {
     icon: Link2,
     label: 'Link',
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-500/15',
+    color: 'text-cyan-700 dark:text-cyan-400',
+    bg: 'bg-cyan-500/10 dark:bg-cyan-500/15',
     border: 'border-cyan-500/20',
     glow: 'rgba(6, 182, 212, 0.22)',
     accent: '#06b6d4',
     accentRgb: '6,182,212',
     shimmer: 'via-cyan-400/60',
-    tagBg: 'rgba(6,182,212,0.10)',
-    tagColor: 'rgba(103,232,249,0.85)',
+    tagClass: 'bg-cyan-500/10 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300',
   },
   video: {
     icon: Play,
     label: 'Video',
-    color: 'text-rose-400',
-    bg: 'bg-rose-500/15',
+    color: 'text-rose-700 dark:text-rose-400',
+    bg: 'bg-rose-500/10 dark:bg-rose-500/15',
     border: 'border-rose-500/20',
     glow: 'rgba(244, 63, 94, 0.22)',
     accent: '#f43f5e',
     accentRgb: '244,63,94',
     shimmer: 'via-rose-400/60',
-    tagBg: 'rgba(244,63,94,0.10)',
-    tagColor: 'rgba(253,164,175,0.85)',
+    tagClass: 'bg-rose-500/10 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300',
   },
   doc: {
     icon: FileText,
     label: 'Doc',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/15',
+    color: 'text-emerald-700 dark:text-emerald-400',
+    bg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
     border: 'border-emerald-500/20',
     glow: 'rgba(16, 185, 129, 0.22)',
     accent: '#10b981',
     accentRgb: '16,185,129',
     shimmer: 'via-emerald-400/60',
-    tagBg: 'rgba(16,185,129,0.10)',
-    tagColor: 'rgba(110,231,183,0.85)',
+    tagClass: 'bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
   },
 }
 
@@ -183,7 +179,7 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
               <Icon size={12} className={config.color} />
               <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>
             </div>
-            <span className="text-xs text-muted font-medium px-2 py-1 rounded-lg bg-muted">
+            <span className="text-[11px] font-medium px-2 py-1 rounded-md bg-slate-200/50 text-slate-700 dark:bg-white/10 dark:text-white/70">
               {resource.subject}
             </span>
           </div>
@@ -206,8 +202,7 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
               {resource.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  style={{ background: config.tagBg, color: config.tagColor, border: 'none' }}
-                  className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-md"
+                  className={`flex items-center gap-1 text-[10px] sm:text-xs px-2 py-0.5 rounded-md ${config.tagClass}`}
                 >
                   <Tag size={9} />
                   {tag}

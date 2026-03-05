@@ -106,8 +106,8 @@ export default function ResourceGrid({ searchQuery, resources, subjects, loading
               onClick={() => setActiveSubject(subject)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                 activeSubject === subject
-                  ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
-                  : 'glass-card text-muted hover:text-muted border border-transparent hover:border-muted'
+                  ? 'bg-violet-500/20 text-violet-700 border border-violet-500/30 dark:text-violet-300'
+                  : 'glass-card text-muted hover:text-foreground border border-transparent hover:border-muted'
               }`}
             >
               {subject}

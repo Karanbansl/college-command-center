@@ -49,11 +49,12 @@ function Planet({ isLight }: { isLight: boolean }) {
       bodyMatRef.current.color.lerp(isLight ? lightBodyColor : darkBodyColor, dampSpeed * delta)
       bodyMatRef.current.emissive.lerp(isLight ? lightEmissive : darkEmissive, dampSpeed * delta)
       bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.8 : 0.8, dampSpeed, delta)
+      bodyMatRef.current.opacity = THREE.MathUtils.damp(bodyMatRef.current.opacity, isLight ? 0 : 1, dampSpeed, delta)
     }
 
     if (atmosMatRef.current) {
       atmosMatRef.current.color.lerp(isLight ? lightAtmosColor : darkAtmosColor, dampSpeed * delta)
-      atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0.12 : 0.12, dampSpeed, delta)
+      atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0 : 0.12, dampSpeed, delta)
     }
 
     if (dirLight1Ref.current) {
@@ -87,6 +88,8 @@ function Planet({ isLight }: { isLight: boolean }) {
           metalness={0.1}
           emissive="#222222"
           emissiveIntensity={0.8}
+          transparent={true}
+          opacity={1}
         />
       </mesh>
 
@@ -162,7 +165,7 @@ export default function SpaceBackground({ count = 4000 }: SpaceBackgroundProps) 
     
     if (pointsMatRef.current) {
       pointsMatRef.current.color.lerp(isLight ? lightStarColor : darkStarColor, 3 * delta)
-      pointsMatRef.current.opacity = THREE.MathUtils.damp(pointsMatRef.current.opacity, isLight ? 0.6 : 0.8, 3, delta)
+      pointsMatRef.current.opacity = THREE.MathUtils.damp(pointsMatRef.current.opacity, isLight ? 0 : 0.8, 3, delta)
     }
   })
 
