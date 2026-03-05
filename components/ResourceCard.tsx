@@ -141,7 +141,7 @@ export default function ResourceCard({ resource, index, onViewPdf }: ResourceCar
           rotateX, rotateY,
           transformStyle: 'preserve-3d',
           borderLeft: `4px solid ${config.accent}`,
-          background: `linear-gradient(135deg, rgba(${config.accentRgb},0.13) 0%, rgba(${config.accentRgb},0.04) 60%, rgba(10,10,20,0.6) 100%)`,
+          background: `linear-gradient(135deg, rgba(${config.accentRgb},0.13) 0%, rgba(${config.accentRgb},0.04) 60%, var(--card-base-gradient) 100%)`,
         }}
         className="glass-card glass-card-hover cursor-pointer h-full relative overflow-hidden group"
         aria-label={`${resource.title} - ${resource.type}`}

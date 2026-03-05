@@ -22,17 +22,16 @@ function Planet({ isLight }: { isLight: boolean }) {
   
   const dirLight1Ref = useRef<THREE.DirectionalLight>(null)
   const ambLightRef = useRef<THREE.AmbientLight>(null)
-  const sunOverlayMatRef = useRef<THREE.MeshBasicMaterial>(null)
 
   // Target values cached to prevent recreation
   const darkBodyColor = useMemo(() => new THREE.Color("#ffffff"), []) // Pure white realistic moon
-  const lightBodyColor = useMemo(() => new THREE.Color("#fef08a"), [])
+  const lightBodyColor = useMemo(() => new THREE.Color("#ffffff"), []) // Forced identical to maintain Moon
   // Provide a tiny baseline emissive to prevent pure pitch-black shadowing
   const darkEmissive = useMemo(() => new THREE.Color("#222222"), [])
-  const lightEmissive = useMemo(() => new THREE.Color("#facc15"), [])
+  const lightEmissive = useMemo(() => new THREE.Color("#222222"), []) // Forced identical to maintain Moon
 
   const darkAtmosColor = useMemo(() => new THREE.Color("#8b5cf6"), [])
-  const lightAtmosColor = useMemo(() => new THREE.Color("#fde047"), [])
+  const lightAtmosColor = useMemo(() => new THREE.Color("#8b5cf6"), []) // Forced identical to maintain Moon
 
   // Use pure white light in Dark Mode to keep the Moon naturally white
   const darkLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
@@ -49,22 +48,17 @@ function Planet({ isLight }: { isLight: boolean }) {
     if (bodyMatRef.current) {
       bodyMatRef.current.color.lerp(isLight ? lightBodyColor : darkBodyColor, dampSpeed * delta)
       bodyMatRef.current.emissive.lerp(isLight ? lightEmissive : darkEmissive, dampSpeed * delta)
-      bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.6 : 0.8, dampSpeed, delta)
+      bodyMatRef.current.emissiveIntensity = THREE.MathUtils.damp(bodyMatRef.current.emissiveIntensity, isLight ? 0.8 : 0.8, dampSpeed, delta)
     }
 
     if (atmosMatRef.current) {
       atmosMatRef.current.color.lerp(isLight ? lightAtmosColor : darkAtmosColor, dampSpeed * delta)
-      atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0.4 : 0.12, dampSpeed, delta)
-    }
-
-    if (sunOverlayMatRef.current) {
-      // Fade in the pure sun overlay to completely hide craters in Light Mode
-      sunOverlayMatRef.current.opacity = THREE.MathUtils.damp(sunOverlayMatRef.current.opacity, isLight ? 1 : 0, dampSpeed, delta)
+      atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0.12 : 0.12, dampSpeed, delta)
     }
 
     if (dirLight1Ref.current) {
       dirLight1Ref.current.color.lerp(isLight ? lightLight1 : darkLight1, dampSpeed * delta)
-      dirLight1Ref.current.intensity = THREE.MathUtils.damp(dirLight1Ref.current.intensity, isLight ? 2 : 4, dampSpeed, delta)
+      dirLight1Ref.current.intensity = THREE.MathUtils.damp(dirLight1Ref.current.intensity, isLight ? 4 : 4, dampSpeed, delta)
     }
 
     if (ambLightRef.current) {
@@ -93,18 +87,6 @@ function Planet({ isLight }: { isLight: boolean }) {
           metalness={0.1}
           emissive="#222222"
           emissiveIntensity={0.8}
-        />
-      </mesh>
-
-      {/* The pure Sun Overlay (Fades in over the Moon to hide craters) */}
-      <mesh>
-        <sphereGeometry args={[50.2, 64, 64]} />
-        <meshBasicMaterial
-          ref={sunOverlayMatRef}
-          color="#facc15"
-          transparent
-          opacity={0}
-          depthWrite={false}
         />
       </mesh>
 

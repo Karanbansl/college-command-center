@@ -17,10 +17,10 @@
   --bg-base: #050510; /* Slightly lighter than pure black for premium feel */
   --text-main: #e2e8f0;
   --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
   --glass-hover: rgba(255, 255, 255, 0.07);
   --glass-shadow: rgba(139, 92, 246, 0.15);
   --scrollbar-track: #0a0a14;
+  --card-base-gradient: rgba(10, 10, 20, 0.6);
 }
 
 /* Light Theme (Clean Minimal Daylight) */
@@ -30,10 +30,10 @@
   --bg-base: #f8fafc; /* Slate 50 - Ultra clean */
   --text-main: #0f172a;
   --glass-bg: rgba(255, 255, 255, 0.75); /* Premium frosted glass */
-  --glass-border: rgba(15, 23, 42, 0.06); /* Nearly invisible crisp border */
   --glass-hover: rgba(255, 255, 255, 0.95);
   --glass-shadow: rgba(15, 23, 42, 0.04); /* Ghost shadow */
   --scrollbar-track: #e2e8f0;
+  --card-base-gradient: rgba(255, 255, 255, 0.8); /* Beautiful frosted white in light mode instead of dark grey blob */
 }
 
 * {
@@ -156,9 +156,10 @@ body {
 
 .light .mesh-gradient {
   background:
-    radial-gradient(ellipse 70% 50% at 20% 30%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(250, 204, 21, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 60% at 50% 80%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+    radial-gradient(ellipse 100% 60% at 50% 100%, #e0f2fe 0%, transparent 80%), /* Soft clouds bottom */
+    radial-gradient(ellipse 80% 50% at 80% 20%, #f0f9ff 0%, transparent 60%), /* Wispy cloud top right */
+    radial-gradient(ellipse 60% 40% at 20% 30%, #fff 0%, transparent 50%), /* Bright cloud top left */
+    linear-gradient(180deg, #38bdf8 0%, #7dd3fc 40%, #bae6fd 100%); /* Perfect Sky Blue base */
   opacity: 1; /* override any default transparency, it should stand out */
 }
 
