@@ -23,6 +23,7 @@ function Planet({ isLight }: { isLight: boolean }) {
   const dirLight1Ref = useRef<THREE.DirectionalLight>(null)
   const dirLight2Ref = useRef<THREE.DirectionalLight>(null)
   const ambLightRef = useRef<THREE.AmbientLight>(null)
+  const sunOverlayMatRef = useRef<THREE.MeshBasicMaterial>(null)
 
   // Target values cached to prevent recreation
   const darkBodyColor = useMemo(() => new THREE.Color("#ffffff"), []) // Pure white realistic moon
@@ -33,10 +34,11 @@ function Planet({ isLight }: { isLight: boolean }) {
   const darkAtmosColor = useMemo(() => new THREE.Color("#8b5cf6"), [])
   const lightAtmosColor = useMemo(() => new THREE.Color("#fde047"), [])
 
-  const darkLight1 = useMemo(() => new THREE.Color("#8b5cf6"), [])
+  // Use pure white/grey lights in Dark Mode to keep the Moon naturally white
+  const darkLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
   const lightLight1 = useMemo(() => new THREE.Color("#ffffff"), [])
   
-  const darkLight2 = useMemo(() => new THREE.Color("#06b6d4"), [])
+  const darkLight2 = useMemo(() => new THREE.Color("#cfcfcf"), [])
   const lightLight2 = useMemo(() => new THREE.Color("#fef08a"), [])
 
   // Slowly rotate the planet and smoothly interpolate colors when theme changes
@@ -58,6 +60,11 @@ function Planet({ isLight }: { isLight: boolean }) {
       atmosMatRef.current.opacity = THREE.MathUtils.damp(atmosMatRef.current.opacity, isLight ? 0.4 : 0.12, dampSpeed, delta)
     }
 
+    if (sunOverlayMatRef.current) {
+      // Fade in the pure sun overlay to completely hide craters in Light Mode
+      sunOverlayMatRef.current.opacity = THREE.MathUtils.damp(sunOverlayMatRef.current.opacity, isLight ? 1 : 0, dampSpeed, delta)
+    }
+
     if (dirLight1Ref.current) {
       dirLight1Ref.current.color.lerp(isLight ? lightLight1 : darkLight1, dampSpeed * delta)
       dirLight1Ref.current.intensity = THREE.MathUtils.damp(dirLight1Ref.current.intensity, isLight ? 2 : 4, dampSpeed, delta)
@@ -75,17 +82,17 @@ function Planet({ isLight }: { isLight: boolean }) {
 
   const moonTexture = useTexture('/moon-diffuse.jpg')
 
-  // We place the planet far back and off to the right
+  // Top-Left corner, reduced size. X is negative for left, Y is positive for top.
   return (
-    <group position={[80, 40, -250]}>
+    <group position={[-110, 80, -250]}>
       {/* Dynamic Lighting */}
-      <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#8b5cf6" />
-      <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#06b6d4" />
+      <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#ffffff" />
+      <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#cfcfcf" />
       <ambientLight ref={ambLightRef} intensity={0.05} color="#ffffff" />
 
       {/* The solid body (Dark Moon -> Bright Sun) */}
       <mesh ref={planetRef}>
-        <sphereGeometry args={[65, 64, 64]} />
+        <sphereGeometry args={[50, 64, 64]} />
         <meshStandardMaterial
           ref={bodyMatRef}
           color="#ffffff"
@@ -97,9 +104,21 @@ function Planet({ isLight }: { isLight: boolean }) {
         />
       </mesh>
 
+      {/* The pure Sun Overlay (Fades in over the Moon to hide craters) */}
+      <mesh>
+        <sphereGeometry args={[50.2, 64, 64]} />
+        <meshBasicMaterial
+          ref={sunOverlayMatRef}
+          color="#facc15"
+          transparent
+          opacity={0}
+          depthWrite={false}
+        />
+      </mesh>
+
       {/* The atmospheric glow layer */}
       <mesh>
-        <sphereGeometry args={[62, 64, 64]} />
+        <sphereGeometry args={[47, 64, 64]} />
         <meshBasicMaterial
           ref={atmosMatRef}
           color="#8b5cf6"
