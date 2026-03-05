@@ -205,13 +205,14 @@ export default function CommandBar({
             />
 
             {/* Command palette */}
-            <motion.div
-              className="fixed top-[15%] left-1/2 -translate-x-1/2 z-[101] w-full max-w-2xl px-4"
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-            >
+            <div className="fixed inset-0 z-[101] flex items-start justify-center pt-[15vh] px-4 pointer-events-none">
+              <motion.div
+                className="w-full max-w-2xl pointer-events-auto"
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
               <div className="glass-card border border-muted shadow-[0_25px_80px_rgba(0,0,0,0.7)] overflow-hidden">
                 {/* Search input */}
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-muted">
@@ -335,6 +336,7 @@ export default function CommandBar({
                 </div>
               </div>
             </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>

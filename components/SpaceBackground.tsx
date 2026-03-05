@@ -25,7 +25,7 @@ function Planet({ isLight }: { isLight: boolean }) {
   const ambLightRef = useRef<THREE.AmbientLight>(null)
 
   // Target values cached to prevent recreation
-  const darkBodyColor = useMemo(() => new THREE.Color("#d1d5db"), []) // Slate-300 for realistic moon
+  const darkBodyColor = useMemo(() => new THREE.Color("#ffffff"), []) // Pure white realistic moon
   const lightBodyColor = useMemo(() => new THREE.Color("#fef08a"), [])
   const darkEmissive = useMemo(() => new THREE.Color("#000000"), [])
   const lightEmissive = useMemo(() => new THREE.Color("#facc15"), [])
@@ -77,7 +77,7 @@ function Planet({ isLight }: { isLight: boolean }) {
 
   // We place the planet far back and off to the right
   return (
-    <group position={[140, 70, -250]}>
+    <group position={[80, 40, -250]}>
       {/* Dynamic Lighting */}
       <directionalLight ref={dirLight1Ref} position={[-50, 30, 20]} intensity={4} color="#8b5cf6" />
       <directionalLight ref={dirLight2Ref} position={[50, -30, -20]} intensity={0.5} color="#06b6d4" />
@@ -85,10 +85,10 @@ function Planet({ isLight }: { isLight: boolean }) {
 
       {/* The solid body (Dark Moon -> Bright Sun) */}
       <mesh ref={planetRef}>
-        <sphereGeometry args={[60, 64, 64]} />
+        <sphereGeometry args={[65, 64, 64]} />
         <meshStandardMaterial
           ref={bodyMatRef}
-          color="#d1d5db"
+          color="#ffffff"
           map={moonTexture}
           roughness={0.9}
           metalness={0.1}

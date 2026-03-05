@@ -23,17 +23,17 @@
   --scrollbar-track: #0a0a14;
 }
 
-/* Light Theme (Daylight & Sun) */
+/* Light Theme (Clean Minimal Daylight) */
 .light {
   --foreground-rgb: 15 23 42;
-  --text-muted-rgb: 30 41 59; /* text-slate-800 for legibility in light mode */
-  --bg-base: #fcfcf9; /* Premium warm off-white */
+  --text-muted-rgb: 71 85 105; /* text-slate-500 for a softer but highly readable minimal contrast */
+  --bg-base: #f8fafc; /* Slate 50 - Ultra clean */
   --text-main: #0f172a;
-  --glass-bg: rgba(255, 255, 255, 0.4); /* clearer glass against blue sky */
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-hover: rgba(255, 255, 255, 0.6);
-  --glass-shadow: rgba(2, 132, 199, 0.15); /* soft blue ocean shadow */
-  --scrollbar-track: #bae6fd;
+  --glass-bg: rgba(255, 255, 255, 0.75); /* Premium frosted glass */
+  --glass-border: rgba(15, 23, 42, 0.06); /* Nearly invisible crisp border */
+  --glass-hover: rgba(255, 255, 255, 0.95);
+  --glass-shadow: rgba(15, 23, 42, 0.04); /* Ghost shadow */
+  --scrollbar-track: #e2e8f0;
 }
 
 * {
@@ -156,9 +156,9 @@ body {
 
 .light .mesh-gradient {
   background:
-    radial-gradient(ellipse 70% 50% at 15% 40%, rgba(253, 224, 71, 0.25) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at 85% 15%, rgba(125, 211, 252, 0.25) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 60% at 50% 80%, rgba(245, 158, 11, 0.15) 0%, transparent 55%);
+    radial-gradient(ellipse 70% 50% at 20% 30%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(250, 204, 21, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 50% 80%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
   opacity: 1; /* override any default transparency, it should stand out */
 }
 

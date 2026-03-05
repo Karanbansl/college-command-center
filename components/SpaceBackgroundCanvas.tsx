@@ -8,7 +8,7 @@ export default function SpaceBackgroundCanvas() {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', background: 'transparent' }}>
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 0, 5], fov: 45, near: 0.1, far: 1000 }}
         style={{ width: '100vw', height: '100vh', background: 'transparent' }}
         gl={{ antialias: false, alpha: true }}
       >
